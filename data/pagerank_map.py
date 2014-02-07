@@ -21,6 +21,7 @@ for line in sys.stdin:
     for node in neighbours:
         nid = int(node)
         sys.stdout.write(str(nid) + "\t" + str(profile) + "\n")
+    profile = (nodeid, currrank)
     sys.stdout.write(str(nodeid) + "\t" + str(profile) + "\n")
     Nline += 1
     
