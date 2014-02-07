@@ -15,9 +15,11 @@ for line in sys.stdin:
     degree = len(neighbours)
     if (degree == 0):
         degree = 1
+        profile = (nodeid, 1)
+        sys.stdout.write(str(nodeid) + "\t" + str(profile) + "\n")
     profile = (nodeid, currrank / degree)
     for node in neighbours:
         nid = int(node)
         sys.stdout.write(str(nid) + "\t" + str(profile) + "\n")
-    profile = (nodeid, currrank)
+    profile = (nodeid, -currrank)
     sys.stdout.write(str(nodeid) + "\t" + str(profile) + "\n")
