@@ -6,8 +6,6 @@ import sys
 # This program simply represents the identity function.
 #
 
-Nline = 0
-
 for line in sys.stdin:
     info = (line.split(":")[1]).split("\t")
     nodeid = int(info[0])
@@ -23,7 +21,3 @@ for line in sys.stdin:
         sys.stdout.write(str(nid) + "\t" + str(profile) + "\n")
     profile = (nodeid, currrank)
     sys.stdout.write(str(nodeid) + "\t" + str(profile) + "\n")
-    Nline += 1
-    
-for i in range(Nline):
-    sys.stdout.write(str(i) + "\t(" + str(Nline) + ")" + "\n")
