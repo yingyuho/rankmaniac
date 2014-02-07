@@ -12,7 +12,8 @@ def format_output():
 
     strout = str(node_id) + '\t' + str(cpr) + ',' + str(ppr)
     for node in neighbours:
-        strout = strout + ',' + str(node[0])
+        if node[0] != node_id:
+            strout = strout + ',' + str(node[0])
     strout += '\n'
     sys.stdout.write(strout)
 
