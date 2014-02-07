@@ -1,7 +1,21 @@
 #!/usr/bin/env python
 
+from random import choice
 import sys
 import cStringIO
+
+def quicksortrank(lst):
+    curtop = []
+    curbot = []
+    if len(lst) <= 1:
+        return lst
+    pivot = choice(lst)
+    for r in lst:
+        if r[1] > pivot[1]:
+            curtop.append(r)
+        elif r[1] < pivot[1]:
+            curbot.append(r)
+    return quicksortrank(curtop) + [pivot] + quicksortrank(curbot)
 
 prevNode = None
 rCur = rPrev = 0.0
@@ -34,14 +48,40 @@ for line in sys.stdin:
     else:
         outNode += ',%s' % attr[0]
 
-strBuf.write('NodeId:%s\t%s,%s%s\n' % (prevNode, rCur, rPrev, outNode))
+sys.stdout.write('NodeId:%s\t%s,%s%s\n' % (prevNode, rCur, rPrev, outNode))
 outNode = ''
 
 for f in finalRank:
     if abs(f[1]-f[2]) / f[1] > ep:
         toStop = False
-        break
-
+        break        
+        
 if toStop:
-    for f in finalRank:
+    top20 = []
+    pivot = finalRank[0][1]
+    top20completed = False
+    wanted = 20
+    while not top20completed:
+        curtop = []
+        curbot = []
+        for f in finalRank:
+            if f[1] > pivot:
+                curtop.append(f)
+            else:
+                curbot.append(f)
+        if len(curtop) > wanted:
+            finalRank = curtop[:]
+        elif len(curtop) < wanted:
+            wanted -= len(curtop)
+            top20 += curtop
+            finalRank = curbot[:]
+        else:
+            top20 += curtop[:]
+            top20completed = True
+        pivot = choice(finalRank)[1]
+        
+    top20 = quicksortrank(top20)
+            
+        
+    for f in top20:
         sys.stdout.write('FinalRank:%f\t%s\n' % (f[1], f[0]))
