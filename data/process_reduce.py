@@ -27,3 +27,6 @@ for line in sys.stdin:
             sys.stdout.write('NodeId:%s\t%s,%s%s\n' % (prevNode, rCur, rPrev, outNode))
             outNode = ''
         prevNode = nodeid
+
+sys.stdout.write('NodeId:%s\t%s,%s%s\n' % (prevNode, rCur, rPrev, outNode))
+outNode = ''

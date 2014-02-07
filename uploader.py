@@ -30,8 +30,8 @@ def do_main(team_id, access_key, secret_key,
     """
 
     # Ensure that the input file exists
-    if not os.path.isfile(os.path.join('data', infile)):
-        raise Exception('file %s not found' % (infile))
+    # if not os.path.isfile(os.path.join('data', infile)):
+    #     raise Exception('file %s not found' % (infile))
 
     # Default modules for where to expect the pagerank step
     # and process step code

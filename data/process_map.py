@@ -9,6 +9,7 @@ for line in sys.stdin:
     attr = info[1].rstrip('\n').split(",")
 
     sys.stdout.write("%s\t%s,%s\n" % (nodeid, attr[0], attr[1]))
+    sys.stdout.write("%s\t%s,%s,%s\n" % ('F', nodeid, attr[0], attr[1]))
 
     for outNode in attr[2:]:
-    	sys.stdout.write("%s\t%s\n" % (outNode, nodeid))
+        sys.stdout.write("%s\t%s\n" % (outNode, nodeid))
