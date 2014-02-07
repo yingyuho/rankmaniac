@@ -8,7 +8,7 @@ import sys
 def format_output():
     cpr = 1 - alpha
     for node in neighbours:
-        cpr += node[1]
+        cpr += alpha * node[1]
 
     strout = str(node_id) + '\t' + str(cpr) + ',' + str(ppr)
     for node in neighbours:
