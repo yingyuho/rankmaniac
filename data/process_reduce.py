@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import sys
+import cStringIO
 
 prevNode = None
 rCur = rPrev = 0.0
@@ -9,6 +10,8 @@ finalRank = []
 
 ep = 1.0E-3
 toStop = True
+
+strBuf = cStringIO.StringIO()
 
 for line in sys.stdin:
     info = line.split("\t")
@@ -21,7 +24,7 @@ for line in sys.stdin:
 
     if nodeid != prevNode:
         if prevNode != None:
-            sys.stdout.write('NodeId:%s\t%s,%s%s\n' % (prevNode, rCur, rPrev, outNode))
+            strBuf.write('NodeId:%s\t%s,%s%s\n' % (prevNode, rCur, rPrev, outNode))
             outNode = ''
         prevNode = nodeid
 
@@ -31,7 +34,7 @@ for line in sys.stdin:
     else:
         outNode += ',%s' % attr[0]
 
-sys.stdout.write('NodeId:%s\t%s,%s%s\n' % (prevNode, rCur, rPrev, outNode))
+strBuf.write('NodeId:%s\t%s,%s%s\n' % (prevNode, rCur, rPrev, outNode))
 outNode = ''
 
 for f in finalRank:

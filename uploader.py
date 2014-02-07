@@ -23,7 +23,7 @@ from rankmaniac import Rankmaniac
 unbuff_stdout = os.fdopen(sys.stdout.fileno(), 'w', 0) # unbuffered
 
 def do_main(team_id, access_key, secret_key,
-            infile='input.txt', max_iter=50):
+            infile='input.txt', max_iter=29):
     """
     Submits a new map-reduce job to Amazon EMR and waits for it to
     finish executing.
@@ -81,7 +81,7 @@ def do_main(team_id, access_key, secret_key,
                     print('')
                     print("Failed to output 'FinalRank'!")
                     break
-                sleep(20) # call Amazon APIs infrequently
+                sleep(5) # call Amazon APIs infrequently
             except EmrResponseError:
                 sleep(60) # call Amazon APIs infrequently
             except KeyboardInterrupt:
