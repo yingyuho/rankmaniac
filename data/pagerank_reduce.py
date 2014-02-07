@@ -25,36 +25,42 @@ def format_output():
 # To distinguish between the cases, ppr is always negative.
 
 alpha = 0.85
+cpr = 0
 ppr = 0
-node_id = -1
-neighbours = []
+node_id = ''
+neighbours = ''
+
 for line in sys.stdin:
     # Extract current node_id
     line = line.strip()
     pos = line.find('\t')
-    id = int(line[:pos])
-    # Get rid of the parentheses
-    line = line[pos + 2 : -1]
+    node_id_new = line[:pos]
+    line = line[pos + 1:]
 
     # When we finish collecting information on one node
-    if id != node_id:
+    if node_id_new != node_id:
         # Calculate new page rank and output
-        if node_id != -1:
-            format_output()
+        if node_id != '':
+            cpr = cpr * alpha + (1 - alpha)
+            sys.stdout.write('%s\t%s,%s%s\n' % (node_id, cpr, ppr, neighbours))
             
-        node_id = id
-        neighbours = []
+        node_id = node_id_new
+        neighbours = ''
+        cpr = 0
 
     # Collect its neighbour's node id and cpr/deg
     pos = line.find(',')
-    id = int(line[:pos])
+    nb = line[:pos]
+    if node_id != nb:
+        neighbours += ',%s' % nb
+
     val = float(line[pos + 1:])
+
     if val < 0 :
         ppr = -val
     else:
-        neighbours.append([id, val])
+        cpr += val
         
-
 # Print last node
-format_output()
-
+cpr = cpr * alpha + (1 - alpha)
+sys.stdout.write('%s\t%s,%s%s\n' % (node_id, cpr, ppr, neighbours))
