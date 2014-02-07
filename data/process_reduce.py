@@ -48,7 +48,7 @@ for line in sys.stdin:
     else:
         outNode += ',%s' % attr[0]
 
-sys.stdout.write('NodeId:%s\t%s,%s%s\n' % (prevNode, rCur, rPrev, outNode))
+strBuf.write('NodeId:%s\t%s,%s%s\n' % (prevNode, rCur, rPrev, outNode))
 outNode = ''
 
 for f in finalRank:
@@ -85,3 +85,5 @@ if toStop:
         
     for f in top20:
         sys.stdout.write('FinalRank:%f\t%s\n' % (f[1], f[0]))
+else:
+    sys.stdout.write(strBuf.getvalue())
