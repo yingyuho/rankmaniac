@@ -2,14 +2,31 @@
 
 import sys
 
+def read_input(f):
+    for line in f:
+        (key, value) = line.split('\t', 1)
+        yield (key, value.rstrip('\n'))
 
-for line in sys.stdin:
-    info = line.split("\t")
-    nodeid = info[0]
-    attr = info[1].rstrip('\n').split(",")
+epsilon = 1.0E-3
+output = []
 
-    sys.stdout.write("%s\t%s,%s\n" % (nodeid, attr[0], attr[1]))
-    sys.stdout.write("%s\t%s,%s,%s\n" % ('F', nodeid, attr[0], attr[1]))
+for (key, attr) in read_input(sys.stdin):
+	if key.startswith('AD:'):
+		nodeid = key[3:]
+	else:
+		nodeid = key
+		output.append('N\t%s,%s\n' % (nodeid, attr))
 
-    for outNode in attr[2:]:
-        sys.stdout.write("%s\t%s\n" % (outNode, nodeid))
+		attr = attr.split(",", 2)
+		# (rankCurr, rankPrev) = (float(attr[0]), float(attr[1]))
+
+		# converged = (abs(rankCurr - rankPrev) / rankCurr < epsilon)
+
+		# if converged:
+		# 	k = 'C'
+		# else:
+		# 	k = 'NC'
+		output.append('RC\t%s,%s\n' % (attr[0], nodeid))
+		output.append('RP\t%s,%s\n' % (attr[1], nodeid))
+
+sys.stdout.write(''.join(output))

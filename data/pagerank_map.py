@@ -2,30 +2,41 @@
 
 import sys
 
-#
-# This program simply represents the identity function.
-#
+rankFormat =        '%s\t%s\n'
+nodeFormat =     '%s\t,%s\n'
+rankPrevFormat = 'RP\t%s,%s\n'
 
-for line in sys.stdin:
-    info = (line.split(":")[1]).split("\t")
-    nodeid = info[0]
-    attributes = info[1].rstrip('\n').split(",")
-    (currrank, prevrank) = (float(attributes[0]), float(attributes[1]))
-    neighbours = attributes[2:]
+def read_input(f):
+    for line in f:
+        yield line.rstrip('\n').split('\t', 1)
 
-    degree = len(neighbours)
-    if (degree == 0):
-        degree = 1
-        profile = (nodeid, currrank)
-        sys.stdout.write('%s\t%s,%s\n' % (nodeid, nodeid, currrank))
-        # sys.stdout.write(nodeid + "\t" + str(profile) + "\n")
+for (key, value) in read_input(sys.stdin):
+    output = []
 
-    profile = (nodeid, currrank / degree)
+    if key.startswith('NodeId:'):
+        nodeid = key[7:]
 
-    for node in neighbours:
-        # sys.stdout.write(node + "\t" + str(profile) + "\n")
-        sys.stdout.write('%s\t%s,%s\n' % (node, nodeid, currrank / degree))
+        attributes = value.split(",", 2)
 
-    profile = (nodeid, -currrank)
-    sys.stdout.write('%s\t%s,%s\n' % (nodeid, nodeid, -currrank))
-    # sys.stdout.write(nodeid + "\t" + str(profile) + "\n")
+        currrank = float(attributes[0])
+
+        sys.stdout.write(rankFormat % (nodeid, -currrank))
+
+        if len(attributes) == 2:
+            sys.stdout.write(rankFormat % (nodeid, currrank))
+        else:
+            neighbours = attributes[2].split(',')
+
+            rankToGive = currrank / len(neighbours)
+
+            output.append(nodeFormat % (nodeid, attributes[2]))
+
+            output.extend([(rankFormat % (nb, rankToGive)) for nb in neighbours])
+
+    sys.stdout.write(''.join(output))
+    
+    # elif key.startswith('Rank:'):
+    #     pass
+    #     rankPrev = key[5:]
+    #     sys.stdout.write(rankPrevFormat % (rankPrev, value))
+

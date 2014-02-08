@@ -1,66 +1,46 @@
 #!/usr/bin/env python
 
 import sys
+from itertools import groupby
+from operator import itemgetter
 
-# Helper function to calculate current page rank, and format output string
-# Output format:
-#	node_id \t cpr, ppr, in_node1, in_node2, .... \n
-def format_output():
-    cpr = 1 - alpha
-    for node in neighbours:
-        cpr += alpha * node[1]
-
-    strout = str(node_id) + '\t' + str(cpr) + ',' + str(ppr)
-    for node in neighbours:
-        if node[0] != node_id:
-            strout = strout + ',' + str(node[0])
-    strout += '\n'
-    sys.stdout.write(strout)
-
-#
-# stdin format:
-#       node_id\t(n_id, n_cpr / n_deg)\n
-#   or node_id\t(node_id, ppr)\n
-#   
-# To distinguish between the cases, ppr is always negative.
+def read_input(f):
+    for line in f:
+        yield line.rstrip('\n').split('\t', 1)
 
 alpha = 0.85
-cpr = 0
-ppr = 0
-node_id = ''
-neighbours = ''
 
-for line in sys.stdin:
-    # Extract current node_id
-    line = line.strip()
-    pos = line.find('\t')
-    node_id_new = line[:pos]
-    line = line[pos + 1:]
+output = []
 
-    # When we finish collecting information on one node
-    if node_id_new != node_id:
-        # Calculate new page rank and output
-        if node_id != '':
-            cpr = cpr * alpha + (1 - alpha)
-            sys.stdout.write('%s\t%s,%s%s\n' % (node_id, cpr, ppr, neighbours))
-            
-        node_id = node_id_new
-        neighbours = ''
-        cpr = 0
+for key, group in groupby(read_input(sys.stdin), itemgetter(0)):
+    # group: iterator to all data (key included) sharing this key
+    # if key == 'RP':
+    #     pass
+    #     # output.extend(['RP\t%s\n' % v[1] for v in group])
+    # if key.startswith('AD'):
+    #     output.extend(['%s\t%s\n' % tuple(v) for v in group])
+    # else:
+    node_id = key
 
-    # Collect its neighbour's node id and cpr/deg
-    pos = line.find(',')
-    nb = line[:pos]
-    if node_id != nb:
-        neighbours += ',%s' % nb
+    neighbours = ''
+    cpr = 0
+    ppr = 0
 
-    val = float(line[pos + 1:])
+    for v in group:
+        attr = v[1]
 
-    if val < 0 :
-        ppr = -val
-    else:
-        cpr += val
-        
-# Print last node
-cpr = cpr * alpha + (1 - alpha)
-sys.stdout.write('%s\t%s,%s%s\n' % (node_id, cpr, ppr, neighbours))
+        if attr[0] == ',':
+            neighbours = attr
+        else:
+            val = float(attr)
+
+            if val < 0 :
+                ppr = -val
+            else:
+                cpr += val
+
+    cpr = cpr * alpha + (1 - alpha)
+
+    sys.stdout.write('%s\t%s,%s%s\n' % (node_id, cpr, ppr, neighbours))
+
+# sys.stdout.write(''.join(output))
