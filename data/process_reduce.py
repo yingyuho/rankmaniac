@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from random import choice
+from random import choice, shuffle
 import sys
 from itertools import groupby
 from operator import itemgetter
@@ -13,6 +13,10 @@ def read_rank(lst):
     for kv in lst:
         (r, n) = kv.split(',', 1)
         yield((float(r), n))
+
+def debug(msg):
+    pass
+    # sys.stdout.write('Msg\t%s\n' % msg)
 
 def quicksortrank(lst):
     curtop = []
@@ -28,12 +32,20 @@ def quicksortrank(lst):
     return quicksortrank(curtop) + [pivot] + quicksortrank(curbot)
 
 def partition_list_dec(lst, start, end, pivot, key=itemgetter(0)):
+    if not start < end:
+        debug('partition_list_dec() assertion failed: start < end')
+        return start
+
     threshold = key(lst[pivot])
+    (lst[pivot], lst[end-1]) = (lst[end-1], lst[pivot])
+
     i = start
-    for j in range(start, end):
+    for j in range(start, end-1):
         if key(lst[j]) >= threshold:
             (lst[i], lst[j]) = (lst[j], lst[i])
             i += 1
+
+    (lst[i], lst[end-1]) = (lst[end-1], lst[i])
 
     if key(lst[start]) == key(lst[end-1]):
         return (start+end)/2
@@ -47,11 +59,17 @@ def group_top_elems(lst, num, key=itemgetter(0)):
 
     while(True):
         if i < num:
+            if start == i and i > 0:
+                debug('group_top_elems() list[%d:%d] content %s' % (start, end, str(lst[start:end])))
             start = i
         elif i > num:
+            if end == i:
+                debug('group_top_elems() list[%d:%d] content %s' % (start, end, str(lst[start:end])))
             end = i
         else:
             break
+        debug('group_top_elems() iteration (%d, %d, %d)' % (start, i, end))
+        debug('group_top_elems() pivot %s' % (str(lst[(start+end)/2]), ))
         i = partition_list_dec(lst, start, end, pivot=(start+end)/2, key=key)
 
 
@@ -66,7 +84,11 @@ rankPrev = [rn for rn in read_rank(dataDict['RP'])]
 
 numRanksToCheck = 20
 
+# shuffle(rankCurr)
+# shuffle(rankPrev)
+debug('Before group_top_elems(rankCurr, ...)')
 group_top_elems(rankCurr, numRanksToCheck, key=itemgetter(0))
+debug('Before group_top_elems(rankPrev, ...)')
 group_top_elems(rankPrev, numRanksToCheck, key=itemgetter(0))
 rankCurr = sorted(rankCurr[:numRanksToCheck], key=itemgetter(0))[::-1]
 rankPrev = sorted(rankPrev[:numRanksToCheck], key=itemgetter(0))[::-1]
@@ -81,18 +103,4 @@ for i in range(numRanksToCheck):
 if toStop:
     sys.stdout.write(''.join(['FinalRank:%f\t%s\n' % tuple(rn) for rn in rankCurr]))
 else:
-    # output.extend(['RankNew:%f\t%s\n' % tuple(rn) for rn in rankCurr])
-    # output.extend(['RankOld:%f\t%s\n' % tuple(rn) for rn in rankPrev])
-
     sys.stdout.write(''.join(['NodeId:%s\t%s\n' % tuple(kv.split(',', 1)) for kv in dataDict['N']]))
-# if dataDict.has_key('NC'):
-#     output.extend(['NodeId:%s\t%s\n' % tuple(kv.split(',', 1)) for kv in dataDict['N']])
-# elif dataDict.has_key('C'):
-#     finalRank = []
-#     for kv in dataDict['C']:
-#         (node, rank) = kv.split(',', 1)
-#         finalRank.append((float(rank), node))
-#     finalRank.sort(key=itemgetter(0))
-#     output.extend(['FinalRank:%f\t%s\n' % (rank, node) for (rank, node) in reversed(finalRank)])
-
-# sys.stdout.write(''.join(output))
