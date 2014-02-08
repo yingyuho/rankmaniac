@@ -8,25 +8,22 @@ def read_input(f):
         yield (key, value.rstrip('\n'))
 
 epsilon = 1.0E-3
-output = []
+# output = []
 
 for (key, attr) in read_input(sys.stdin):
-	if key.startswith('AD:'):
-		nodeid = key[3:]
-	else:
-		nodeid = key
-		output.append('N\t%s,%s\n' % (nodeid, attr))
+	nodeid = key
+	sys.stdout.write('N\t%s,%s\n' % (nodeid, attr))
 
-		attr = attr.split(",", 2)
-		# (rankCurr, rankPrev) = (float(attr[0]), float(attr[1]))
+	attr = attr.split(",", 2)
+	# (rankCurr, rankPrev) = (float(attr[0]), float(attr[1]))
 
-		# converged = (abs(rankCurr - rankPrev) / rankCurr < epsilon)
+	# converged = (abs(rankCurr - rankPrev) / rankCurr < epsilon)
 
-		# if converged:
-		# 	k = 'C'
-		# else:
-		# 	k = 'NC'
-		output.append('RC\t%s,%s\n' % (attr[0], nodeid))
-		output.append('RP\t%s,%s\n' % (attr[1], nodeid))
+	# if converged:
+	# 	k = 'C'
+	# else:
+	# 	k = 'NC'
+	sys.stdout.write('RC\t%s,%s\n' % (attr[0], nodeid))
+	sys.stdout.write('RP\t%s,%s\n' % (attr[1], nodeid))
 
-sys.stdout.write(''.join(output))
+# sys.stdout.write(''.join(output))

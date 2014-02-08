@@ -10,10 +10,11 @@ def read_input(f):
 
 alpha = 0.85
 
-output = []
+# output = []
 
 for key, group in groupby(read_input(sys.stdin), itemgetter(0)):
     # group: iterator to all data (key included) sharing this key
+    
     # if key == 'RP':
     #     pass
     #     # output.extend(['RP\t%s\n' % v[1] for v in group])

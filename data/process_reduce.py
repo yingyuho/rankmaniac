@@ -59,8 +59,7 @@ output = []
 dataDict = dict()
 
 for key, group in groupby(read_input(sys.stdin), itemgetter(0)):
-    value = [v[1] for v in group]
-    dataDict[key] = value
+    dataDict[key] = [v[1] for v in group]
 
 rankCurr = [rn for rn in read_rank(dataDict['RC'])]
 rankPrev = [rn for rn in read_rank(dataDict['RP'])]
@@ -80,12 +79,12 @@ for i in range(numRanksToCheck):
         break
 
 if toStop:
-    output.extend(['FinalRank:%f\t%s\n' % tuple(rn) for rn in rankCurr])
+    sys.stdout.write(''.join(['FinalRank:%f\t%s\n' % tuple(rn) for rn in rankCurr]))
 else:
-    output.extend(['RankNew:%f\t%s\n' % tuple(rn) for rn in rankCurr])
-    output.extend(['RankOld:%f\t%s\n' % tuple(rn) for rn in rankPrev])
+    # output.extend(['RankNew:%f\t%s\n' % tuple(rn) for rn in rankCurr])
+    # output.extend(['RankOld:%f\t%s\n' % tuple(rn) for rn in rankPrev])
 
-    output.extend(['NodeId:%s\t%s\n' % tuple(kv.split(',', 1)) for kv in dataDict['N']])
+    sys.stdout.write(''.join(['NodeId:%s\t%s\n' % tuple(kv.split(',', 1)) for kv in dataDict['N']]))
 # if dataDict.has_key('NC'):
 #     output.extend(['NodeId:%s\t%s\n' % tuple(kv.split(',', 1)) for kv in dataDict['N']])
 # elif dataDict.has_key('C'):
@@ -96,4 +95,4 @@ else:
 #     finalRank.sort(key=itemgetter(0))
 #     output.extend(['FinalRank:%f\t%s\n' % (rank, node) for (rank, node) in reversed(finalRank)])
 
-sys.stdout.write(''.join(output))
+# sys.stdout.write(''.join(output))
