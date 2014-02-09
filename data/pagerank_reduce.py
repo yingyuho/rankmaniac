@@ -15,14 +15,14 @@ for key, group in groupby(read_input(sys.stdin), itemgetter(0)):
 
     node_id = key
 
-    # neighbours = ''
+    # To collect sum of PRs from neighbours
     prn = 0.0
 
     for attr in imap(itemgetter(1), group):
-
+        # Identity operation for edge data
         if attr[0] == 'E':
             sys.stdout.write('%s\t%s\n' % (node_id, attr))
-            # neighbours = attr
+        # Get previous PRs
         elif attr[0] == 'R':
             (prc, prp) = attr.split(',')[1:]
         else:
@@ -30,7 +30,7 @@ for key, group in groupby(read_input(sys.stdin), itemgetter(0)):
 
     prn = prn * alpha + (1 - alpha)
 
-    pre = (-1. * float(prp) + 1. * float(prc) + 2. * prn) / 2.
+    # pre = (-1. * float(prp) + 1. * float(prc) + 2. * prn) / 2.
 
     sys.stdout.write('%s\t%s,%s\n' % (node_id, prn, prc))
 

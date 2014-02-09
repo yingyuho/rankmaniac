@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from random import choice, shuffle
+from random import choice, shuffle, randrange
 import sys
 from itertools import groupby, imap
 from operator import itemgetter
@@ -32,7 +32,12 @@ def quicksortrank(lst):
             curbot.append(r)
     return quicksortrank(curtop) + [pivot] + quicksortrank(curbot)
 
-def partition_list_dec(lst, start, end, pivot, key):
+# The same as the main subroutine of quicksort
+def partition_list_dec(lst, start=0, end=None, pivot=None, key=str):
+    if end == None:
+        end = len(lst)
+    if pivot == None:
+        pivot = randrange(start, end)
     if not start < end:
         debug('partition_list_dec() assertion failed: start < end')
         return start
@@ -54,32 +59,34 @@ def partition_list_dec(lst, start, end, pivot, key):
     (lst[i], lst[end-1]) = (lst[end-1], lst[i])
     i += 1
 
-    # This deals with a list with identical keys
-    if key(lst[start]) == key(lst[end-1]):
-        return (start+end)/2
-    else:
-        return i
+    return i
 
+# Take a list <lst> and put <num> entries with greatest <key> in <lst>[0:<num>]
+# <lst> is modified
 def group_top_elems(lst, num, key):
     start = 0
     end = len(lst)
     i = 0
 
     if num < len(lst):
-        while(True):
+        while True:
             if i < num:
                 if start == i and i > 0:
                     debug('group_top_elems() list[%d:%d] content %s' % (start, end, str(lst[start:end])))
                 start = i
             elif i > num:
-                if end == i:
-                    debug('group_top_elems() list[%d:%d] content %s' % (start, end, str(lst[start:end])))
-                end = i
+                # if end == i:
+                #     debug('group_top_elems() list[%d:%d] content %s' % (start, end, str(lst[start:end])))
+                end = i - 1
             else:
                 break
             debug('group_top_elems() iteration (%d, %d, %d)' % (start, i, end))
-            debug('group_top_elems() pivot %s' % (str(lst[(start+end)/2]), ))
-            i = partition_list_dec(lst, start, end, pivot=(start+end-1)/2, key=key)
+            pivot = randrange(start, end)
+            debug('group_top_elems() pivot %d' % (pivot, ))
+            i = partition_list_dec(lst, start, end, pivot=pivot, key=key)
+
+            if i == end and all(key(x) == key(lst[i-1]) for x in lst[start:i-1]):
+                return
         # result = lst[0:i]
     # else:
         # result = list(lst)
@@ -87,46 +94,78 @@ def group_top_elems(lst, num, key):
     # result.sort(key=key, reverse=True)
     # return result
 
+def quicksort_test(lst, start=0, end=None, key=str):
+    if end == None:
+        end = len(lst)
+
+    if (end - start) <= 1:
+        return
+
+    pivot = randrange(start, end)
+    i = partition_list_dec(lst, start, end, pivot=pivot, key=key)
+
+    if any(key(x) != key(lst[i-1]) for x in lst[start:i-1]):
+        quicksort_test(lst, start, i-1, key)
+    
+    quicksort_test(lst, i, end, key)
+
 def main():
+    # Stores all information from process_map 
+    # (the same as that from pagerank_reduce)
     rank = []
-    neighbours = []
+
+    # Store the sum of updated PR for error correction
     rankCurrSum = 0.
 
     for node_id, group in groupby(read_input(sys.stdin), itemgetter(0)):
 
+        # Fields:   0 - Node ID
+        #           1 - Updated PRs     
+        #           2 - Old PRs   
+        #           3 - Neighbours
         rank.append(['', 0.0, 0.0, ''])
 
         for attr in imap(itemgetter(1), group):
+            # 3 - Neighbours
             if attr[0] == 'E':
                 rank[-1][-1] = attr[1:]
+            # The others
             else:
                 (prc, prp) = map(float, attr.split(',', 1))
                 rank[-1][0:3] = (node_id, prc, prp)
                 rankCurrSum += prc
 
-    # Re-normalize PageRanks
+    # Re-normalize updated PageRanks
     normFactor = len(rank) / rankCurrSum
 
     for r in rank:
         r[1] *= normFactor
 
+    # The number (>= 20) of updated PRs to check convergence and output
     numTops = 25
 
     # debug('Getting rankPrev')
     # group_top_elems(rank, numTops, key=itemgetter(2))
     # rankPrev = map(itemgetter(2,0), sorted(rank[:numTops], key=itemgetter(2), reverse=True))
 
+    # Get list of (Updated PR, Node ID) pairs
     debug('Getting rankCurr')
     group_top_elems(rank, numTops, key=itemgetter(1))
     rankCurr = map(itemgetter(1,0), sorted(rank[:numTops], key=itemgetter(1), reverse=True))
 
+    # Get list of (Updated PR, Old PR) pairs with length <numTops>
     rcp = map(itemgetter(1,2), rank[:numTops])
 
-    epsilon = 0.02 * sqrt(sum([
-        (rcp[i][0] - rcp[i+1][0]) ** 2 for i in range(numTops-1)]) / (numTops-1))
+    # Tolerance of relative error
+    epsilon = 2E-4
+    # epsilon = 0.02 * sqrt(sum([
+    #     (rcp[i][0] - rcp[i+1][0]) ** 2 for i in range(numTops-1)]) / (numTops-1))
 
     # toStop = all(rankCurr[i][1] == rankPrev[i][1] for i in range(numTops))
-    toStop = all(abs(r[0] - r[1]) < epsilon for r in rcp)
+
+    # Estimate relative errors for top <numTops> PRs
+    # and finalize if all are less then <epsilon>
+    toStop = all(abs(r[0] - r[1]) / r[0] < epsilon for r in rcp)
 
     if toStop:
         sys.stdout.write(''.join(['FinalRank:%f\t%s\n' % rn for rn in rankCurr]))

@@ -12,5 +12,6 @@ def read_input(f):
 def main():
 	bins = [[] for i in range(10)]
 
+
 if __name__ == '__main__':
     main()

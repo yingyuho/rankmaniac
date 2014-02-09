@@ -17,15 +17,15 @@ def main():
     except StopIteration:
         return
 
-    if key.startswith('F'):
-        while True:
-            sys.stdout.write('%s\t%s\n' % (key, value))
-            try:
-                (key, value) = lines.next()
-            except StopIteration:
-                return
+    # if key.startswith('F'):
+    #     while True:
+    #         sys.stdout.write('%s\t%s\n' % (key, value))
+    #         try:
+    #             (key, value) = lines.next()
+    #         except StopIteration:
+    #             return
 
-    elif key.startswith('N'):
+    if key.startswith('N'):
         offset = key.find(':') + 1
 
         fillRankPrev = key.startswith('NodeId:')
