@@ -1,47 +1,36 @@
 #!/usr/bin/env python
 
 import sys
-from itertools import groupby
+from itertools import groupby, imap
 from operator import itemgetter
 
 def read_input(f):
-    for line in f:
+    for line in iter(f.readline, ''):
         yield line.rstrip('\n').split('\t', 1)
 
 alpha = 0.85
 
-# output = []
-
 for key, group in groupby(read_input(sys.stdin), itemgetter(0)):
     # group: iterator to all data (key included) sharing this key
-    
-    # if key == 'RP':
-    #     pass
-    #     # output.extend(['RP\t%s\n' % v[1] for v in group])
-    # if key.startswith('AD'):
-    #     output.extend(['%s\t%s\n' % tuple(v) for v in group])
-    # else:
+
     node_id = key
 
-    neighbours = ''
-    cpr = 0
-    ppr = 0
+    # neighbours = ''
+    prn = 0.0
 
-    for v in group:
-        attr = v[1]
+    for attr in imap(itemgetter(1), group):
 
-        if attr[0] == ',':
-            neighbours = attr
+        if attr[0] == 'E':
+            sys.stdout.write('%s\t%s\n' % (node_id, attr))
+            # neighbours = attr
+        elif attr[0] == 'R':
+            (prc, prp) = attr.split(',')[1:]
         else:
-            val = float(attr)
+            prn += float(attr)
 
-            if val < 0 :
-                ppr = -val
-            else:
-                cpr += val
+    prn = prn * alpha + (1 - alpha)
 
-    cpr = cpr * alpha + (1 - alpha)
+    pre = (-1. * float(prp) + 1. * float(prc) + 2. * prn) / 2.
 
-    sys.stdout.write('%s\t%s,%s%s\n' % (node_id, cpr, ppr, neighbours))
+    sys.stdout.write('%s\t%s,%s\n' % (node_id, prn, prc))
 
-# sys.stdout.write(''.join(output))

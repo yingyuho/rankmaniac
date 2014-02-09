@@ -3,27 +3,32 @@
 import sys
 
 def read_input(f):
-    for line in f:
-        (key, value) = line.split('\t', 1)
-        yield (key, value.rstrip('\n'))
+    for line in iter(f.readline, ''):
+        yield line.rstrip('\n').split('\t', 1)
 
-epsilon = 1.0E-3
-# output = []
+def main():
+    for line in iter(sys.stdin.readline, ''):
+        sys.stdout.write(line)
 
-for (key, attr) in read_input(sys.stdin):
-	nodeid = key
-	sys.stdout.write('N\t%s,%s\n' % (nodeid, attr))
+def unused():
+    for (key, attr) in read_input(sys.stdin):
+        # Buffer
+        output = []
 
-	attr = attr.split(",", 2)
-	# (rankCurr, rankPrev) = (float(attr[0]), float(attr[1]))
+        nodeid = key
 
-	# converged = (abs(rankCurr - rankPrev) / rankCurr < epsilon)
+        if attr[0] == 'E':
+            output.append('%s\t%s\n' % (node_id, attr))
+            continue
 
-	# if converged:
-	# 	k = 'C'
-	# else:
-	# 	k = 'NC'
-	sys.stdout.write('RC\t%s,%s\n' % (attr[0], nodeid))
-	sys.stdout.write('RP\t%s,%s\n' % (attr[1], nodeid))
+        sys.stdout.write('N\t%s,%s\n' % (nodeid, attr))
 
-# sys.stdout.write(''.join(output))
+        attr = attr.split(",", 2)
+
+        sys.stdout.write('RC\t%s,%s\n' % (attr[0], nodeid))
+        sys.stdout.write('RP\t%s,%s\n' % (attr[1], nodeid))
+
+        # sys.stdout.write(''.join(output))
+
+if __name__ == '__main__':
+    main()

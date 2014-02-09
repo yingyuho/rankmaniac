@@ -7,41 +7,66 @@ nodeFormat =     '%s\t,%s\n'
 rankPrevFormat = 'RP\t%s,%s\n'
 
 def read_input(f):
-    for line in f:
+    for line in iter(f.readline, ''):
         yield line.rstrip('\n').split('\t', 1)
 
-for (key, value) in read_input(sys.stdin):
-    # Buffer
-    # output = []
+def main():
+    lines = read_input(sys.stdin)
+    try:
+        (key, value) = lines.next()
+    except StopIteration:
+        return
 
-    if key.startswith('NodeId:'):
-        nodeid = key[7:]
+    if key.startswith('F'):
+        while True:
+            sys.stdout.write('%s\t%s\n' % (key, value))
+            try:
+                (key, value) = lines.next()
+            except StopIteration:
+                return
 
-        # Take all neighbors as one string in attr[2], if there are any
-        attr = value.split(",", 2)
+    elif key.startswith('N'):
+        offset = key.find(':') + 1
 
-        currrank = float(attr[0])
+        fillRankPrev = key.startswith('NodeId:')
 
-        # Current PR for later reference
-        sys.stdout.write(rankFormat % (nodeid, -currrank))
+        while True:
+            # Remove tag
+            nodeid = key[offset:]
 
-        if len(attr) == 2:
-            # No outgoint edges so give all PR to itself
-            sys.stdout.write(rankFormat % (nodeid, currrank))
-        else:
-            # Get neighbors as a list
-            neighbors = attr[2].split(',')
+            # Take all neighbors as one string in attr[2], if there are any
+            attr = value.split(",", 2)
 
-            # Divide current PR into (degree) equal pieces
-            rankToGive = currrank / len(neighbors)
+            rankCurr = float(attr[0])
 
-            # Emit its neighbors in order to glue them back later
-            sys.stdout.write(nodeFormat % (nodeid, attr[2]))
+            if fillRankPrev:
+                rankPrev = rankCurr
+            else:
+                rankPrev = float(attr[1])
 
-            # For each neighbor, emit PR
-            sys.stdout.write(''.join(
-                [(rankFormat % (nb, rankToGive)) for nb in neighbors]))
+            # Current PR for later reference
+            sys.stdout.write('%s\tR,%s,%s\n' % (nodeid, rankCurr, rankPrev))
 
-    # Flush
-    # sys.stdout.write(''.join(output))
-    
+            if len(attr) == 2:
+                # No outgoint edges so give all PR to itself
+                sys.stdout.write(rankFormat % (nodeid, rankCurr))
+            else:
+                # Get neighbors as a list
+                neighbors = attr[2].split(',')
+
+                # Divide current PR into (degree) equal pieces
+                rankToGive = rankCurr / len(neighbors)
+
+                # Emit its neighbors in order to glue them back later
+                sys.stdout.write('%s\tE,%s\n' % (nodeid, attr[2]))
+
+                # For each neighbor, emit PR
+                sys.stdout.write(''.join([rankFormat % (nb, rankToGive) for nb in neighbors]))
+
+            try:
+                (key, value) = lines.next()
+            except StopIteration:
+                return
+
+if __name__ == '__main__':
+    main()
