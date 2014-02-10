@@ -24,16 +24,14 @@ for key, group in groupby(read_input(sys.stdin), itemgetter(0)):
     incoming = []
 
     for attr in imap(itemgetter(1), group):
-    
-        if attr[:2] == 'FP':
-            profile = attr[3:]
-            prn += 1 - alpha
-            profile = profile.split(',', 3)
             
-        elif attr[0] == 'P':
+        if attr[0] == 'P':
             profile = attr[2:]
             profile = profile.split(',', 3)
-            prn += float(profile[1])
+            if (profile[1] != '0.0'):
+                prn += float(profile[1])
+            else:
+                profile[1] = '1.0'
 
         elif attr[0] == 'D':
             dead = True

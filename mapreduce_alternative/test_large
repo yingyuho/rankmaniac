@@ -1,5 +1,5 @@
 cp ../local_test_data/EmailEnron graph.txt
-for i in {1..14}
+for i in {1..11}
 do
 cp graph.txt input.txt
 python pagerank_map.py < input.txt | sort | python pagerank_reduce.py | python process_map.py | sort | python process_reduce.py > graph.txt
