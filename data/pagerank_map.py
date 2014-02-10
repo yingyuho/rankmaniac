@@ -11,45 +11,42 @@ def read_input(f):
         yield line.rstrip('\n').split('\t', 1)
 
 def main():
-    lines = read_input(sys.stdin)
-    try:
-        (key, value) = lines.next()
-    except StopIteration:
-        return
+    for (key, value) in read_input(sys.stdin):
 
-    # if key.startswith('F'):
-    #     while True:
-    #         sys.stdout.write('%s\t%s\n' % (key, value))
-    #         try:
-    #             (key, value) = lines.next()
-    #         except StopIteration:
-    #             return
-
-    if key.startswith('N'):
-        offset = key.find(':') + 1
-
-        fillRankPrev = key.startswith('NodeId:')
-
-        while True:
+        # key.startswith('FinalRank:')
+        if key[0] == 'F':
             # Remove tag
-            nodeid = key[offset:]
+            rank = key[10:]
+
+            nodeid = value
+
+            if rank == '':
+                sys.stdout.write('%s\tF\n' % (nodeid, ))
+            else:
+                sys.stdout.write('%s\tF,%s\n' % (nodeid, rank))
+
+        # key.startswith('NodeId:')
+        elif key[0] == 'N':
+            # Remove tag
+            nodeid = key[7:]
 
             # Take all neighbors as one string in attr[2], if there are any
             attr = value.split(",", 2)
 
             rankCurr = float(attr[0])
 
-            if fillRankPrev:
-                rankPrev = rankCurr
-            else:
-                rankPrev = float(attr[1])
+            # if fillRankPrev:
+            #     rankPrev = rankCurr
+            # else:
+            #     rankPrev = float(attr[1])
 
             # Current PR for later reference
-            sys.stdout.write('%s\tR,%s,%s\n' % (nodeid, rankCurr, rankPrev))
+            # sys.stdout.write('%s\tR,%s,%s\n' % (nodeid, rankCurr, rankPrev))
+            sys.stdout.write('%s\tR,%s\n' % (nodeid, attr[0]))
 
             if len(attr) == 2:
                 # No outgoint edges so give all PR to itself
-                sys.stdout.write(rankFormat % (nodeid, rankCurr))
+                sys.stdout.write(rankFormat % (nodeid, attr[0]))
             else:
                 # Get neighbors as a list
                 neighbors = attr[2].split(',')
@@ -62,11 +59,6 @@ def main():
 
                 # For each neighbor, emit PR
                 sys.stdout.write(''.join([rankFormat % (nb, rankToGive) for nb in neighbors]))
-
-            try:
-                (key, value) = lines.next()
-            except StopIteration:
-                return
 
 if __name__ == '__main__':
     main()

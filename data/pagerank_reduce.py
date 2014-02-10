@@ -18,19 +18,32 @@ for key, group in groupby(read_input(sys.stdin), itemgetter(0)):
     # To collect sum of PRs from neighbours
     prn = 0.0
 
+    final = False
+    edges = ''
+    prf = None
+
     for attr in imap(itemgetter(1), group):
         # Identity operation for edge data
-        if attr[0] == 'E':
-            sys.stdout.write('%s\t%s\n' % (node_id, attr))
+        if attr.startswith('E,'):
+            # 'E,' included
+            edges = attr
         # Get previous PRs
-        elif attr[0] == 'R':
-            (prc, prp) = attr.split(',')[1:]
+        elif attr.startswith('R,'):
+            prc = attr[2:]
+        # Get finalized PRs if any and disable other outputs
+        elif attr[0] == 'F':
+            final = True
+            if len(attr) >= 2 and prf == None:
+                prf = attr
         else:
             prn += float(attr)
 
-    prn = prn * alpha + (1 - alpha)
+    # sys.stderr.write(str(final) + '\n')
 
-    # pre = (-1. * float(prp) + 1. * float(prc) + 2. * prn) / 2.
-
-    sys.stdout.write('%s\t%s,%s\n' % (node_id, prn, prc))
-
+    if not final:
+        prn = prn * alpha + (1 - alpha)
+        if edges != '':
+            sys.stdout.write('%s\t%s\n' % (node_id, edges))
+        sys.stdout.write('%s\t%s,%s\n' % (node_id, prn, prc))
+    elif prf != None:
+        sys.stdout.write('%s\t%s\n' % (node_id, prf))
