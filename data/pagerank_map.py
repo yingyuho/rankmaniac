@@ -35,13 +35,7 @@ def main():
 
             rankCurr = float(attr[0])
 
-            # if fillRankPrev:
-            #     rankPrev = rankCurr
-            # else:
-            #     rankPrev = float(attr[1])
-
             # Current PR for later reference
-            # sys.stdout.write('%s\tR,%s,%s\n' % (nodeid, rankCurr, rankPrev))
             sys.stdout.write('%s\tR,%s\n' % (nodeid, attr[0]))
 
             if len(attr) == 2:

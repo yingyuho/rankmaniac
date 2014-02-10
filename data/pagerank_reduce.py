@@ -38,8 +38,6 @@ for key, group in groupby(read_input(sys.stdin), itemgetter(0)):
         else:
             prn += float(attr)
 
-    # sys.stderr.write(str(final) + '\n')
-
     if not final:
         prn = prn * alpha + (1 - alpha)
         if edges != '':
