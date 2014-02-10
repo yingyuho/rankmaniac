@@ -6,7 +6,7 @@ from itertools import groupby, imap
 from operator import itemgetter
 from math import sqrt
 
-init_epsilon = 1E-3
+init_epsilon = 3E-4
 
 def read_input(f):
     for line in iter(f.readline, ''):
@@ -41,8 +41,8 @@ def main():
     
     epsilon = init_epsilon
     toStop = True
-    for i in range(topcount - 1):
-        diffthresh = min((toppages[i][1] - toppages[i + 1][1]) * 2 / toppages[i + 1][1], epsilon)
+    for i in range(1, topcount):
+        diffthresh = min((toppages[i - 1][1] - toppages[i][1]) * 2 / toppages[i][1], epsilon)
         if (abs(toppages[i][1] - toppages[i][2]) / toppages[i][2] > diffthresh):
             toStop = False
     
