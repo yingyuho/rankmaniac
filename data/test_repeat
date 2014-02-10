@@ -1,0 +1,7 @@
+let rep=$3-1
+if [ "$rep" -gt 0 ]
+then
+{ printf './test_all < '$1' ' ; printf '%.0s| ./test_all ' $(eval echo {1..$rep}) ; printf '> '$2 ; } | sh
+else
+{ printf './test_all < '$1' > '$2 ; } | sh
+fi

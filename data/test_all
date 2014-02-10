@@ -1,0 +1,4 @@
+./pagerank_map.py |
+sort -k1,1 -s -n |
+./pagerank_reduce.py |
+./process_reduce.py
