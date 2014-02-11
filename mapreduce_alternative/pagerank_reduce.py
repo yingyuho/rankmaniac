@@ -17,6 +17,7 @@ for key, group in groupby(read_input(sys.stdin), itemgetter(0)):
 
     # To collect sum of PRs from neighbours
     prn = 0.0
+    prf = None
 
     final = False
     profile = None
@@ -38,6 +39,11 @@ for key, group in groupby(read_input(sys.stdin), itemgetter(0)):
         # attr = D,<dead node>
         elif attr[0] == 'D':
             dead = True
+        # attr = F, <rank> or F
+        elif attr[0] == 'F':
+            final = True
+            if len(attr) >= 2 and prf == None:
+                prf = attr
         else:
             source = attr.split(',')
             prn += float(source[0]) * alpha
@@ -46,6 +52,8 @@ for key, group in groupby(read_input(sys.stdin), itemgetter(0)):
     if dead:
         sys.stdout.write(''.join(['%s\tD,%s\n' % (source, node_id) 
             for source in incoming if source != node_id]))
+    elif final and prf != None:
+        sys.stdout.write('%s\t%s\n' % (node_id, prf))
     else:
         if profile != None:
             if len(profile) == 4:
