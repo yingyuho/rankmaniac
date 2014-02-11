@@ -76,6 +76,7 @@ def main():
     rank.sort(key = itemgetter(1), reverse = True)
 
     toppages = rank[:topcount]
+    # sys.stderr.write('%s\n' % str(rank))
 
     if final:
         sys.stdout.write(''.join(['FinalRank:%f\t%s\n' % (r[1], r[0]) for r in toppages]))

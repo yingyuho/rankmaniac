@@ -3,7 +3,7 @@
 import sys
 
 steadyline = 1E-4
-init_deathline = 0.8
+init_deathline = 10
 alpha = 0.85
 
 def read_input(f):

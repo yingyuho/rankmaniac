@@ -16,7 +16,7 @@ def main():
     rank = []
 
     # Store the sum of updated PR for error correction
-    rankCurrSum = 0.
+    # rankCurrSum = 0.
     nodeCount = 0
 
     final = False
@@ -47,25 +47,19 @@ def main():
                 (prc, prp) = map(float, attr.split(',', 1))
                 rank[-1] = [int(node_id), prc, prp]
 
-                rankCurrSum += prc
+                # rankCurrSum += prc
                 nodeCount += 1
 
         if not final:
             sys.stdout.write('NodeId:%s\t%s,%s%s\n' % (node_id, prc, prp, edges))
 
-    if final:
-        rank.sort(key=itemgetter(1), reverse=True)
-        sys.stdout.write(''.join(['FinalRank:%f\t%d\n' % (r[1], r[0]) for r in rank]))
-        return
-
-    # Re-normalize updated PageRanks
-    normFactor = nodeCount / rankCurrSum
-
-    for r in rank:
-        r[1] *= normFactor
-
     # The number (>= 20) of updated PRs to check convergence and output
     numTops = 25
+
+    if final:
+        rank.sort(key=itemgetter(1), reverse=True)
+        sys.stdout.write(''.join(['FinalRank:%f\t%d\n' % (r[1], r[0]) for r in rank[:numTops]]))
+        return
 
     # Get list of (Updated PR, Node ID) pairs
     rank.sort(key=itemgetter(1), reverse=True)
@@ -76,7 +70,7 @@ def main():
     rcp = map(itemgetter(1,2), rank[:numTops])
 
     # Tolerance of relative error
-    epsilon = 3E-4
+    epsilon = 2E-3
    
     # Estimate relative errors for top <numTops> PRs
     # and finalize if all are less then <epsilon>
