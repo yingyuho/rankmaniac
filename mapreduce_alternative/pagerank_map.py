@@ -43,12 +43,13 @@ def main():
             elif len(attr) == 4:
                 neighbours = attr[3].split(',')
                 rankToGive = dpr / deg
-                deathline = deathline * 0.98 + cpr * 0.02
                 if abs(rankToGive) < steadyline and cpr < deathline:
                     dead = True
                 else:
                     for nb in neighbours:
                         sys.stdout.write('%s\t%s,%s\n' % (nb, rankToGive, nid))
+                if (cpr > deathline):
+                    deathline = deathline * 0.98 + cpr * 0.02
             if dead:
                 sys.stdout.write('%s\tD,%s\n' % (nid, value))
             else:
