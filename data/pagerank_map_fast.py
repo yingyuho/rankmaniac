@@ -48,7 +48,7 @@ def main():
                     # dead = True
                     sys.stdout.write('%s\tD\n' % (nid, ))
                 else:
-                    sys.stdout.write('%s\tP,%s\n' % (nid, value))
+                    # sys.stdout.write('%s\tP,%s\n' % (nid, value))
                     sys.stdout.write(''.join(['%s\t%s,%s\n' % (nb, rankToGive, nid) 
                         for nb in neighbours]))
                 # if (cpr > deathline):

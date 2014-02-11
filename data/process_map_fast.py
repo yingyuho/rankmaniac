@@ -33,4 +33,4 @@ def main():
             sys.stdout.write('%s\t%s\n' % (node_id, profile))
 
 if __name__ == '__main__':
-    main()
+    identity()

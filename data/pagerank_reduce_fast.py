@@ -49,11 +49,12 @@ for key, group in groupby(read_input(sys.stdin), itemgetter(0)):
             prn += float(source[0]) * alpha
             incoming.append(source[1])
 
-    if dead:
+    if final:
+        if prf != None:
+            sys.stdout.write('%s\t%s\n' % (node_id, prf))
+    elif dead:
         sys.stdout.write(''.join(['%s\tD,%s\n' % (source, node_id) 
             for source in incoming if source != node_id]))
-    elif final and prf != None:
-        sys.stdout.write('%s\t%s\n' % (node_id, prf))
     else:
         if profile != None:
             if len(profile) == 4:
