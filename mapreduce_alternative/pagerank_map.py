@@ -19,7 +19,7 @@ def main():
             attr = value.split(',')
             
             deg = len(attr) - 2
-            sys.stdout.write('%s\tP,%s,%s,%s\n' % (nid, str(deg), '0.0', value[3:]))
+            sys.stdout.write('%s\tP,%s,%s,%s\n' % (nid, str(deg), '0.0', value[4:]))
             sys.stdout.write('%s\t%s,%s\n' % (nid, (1 - alpha) / alpha, nid))
             if deg == 0:
                 sys.stdout.write('%s\t%s,%s\n' % (nid, attr[0], nid))
