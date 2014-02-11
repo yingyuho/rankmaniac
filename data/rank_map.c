@@ -3,8 +3,10 @@
 #include <string.h>
 
 #define A       0.85f
-#define SLINE   2
-#define DLINE   1E-5f
+#define SLINE   1E-5f
+#define DLINE   0.8f
+
+#define BUFSIZE 2048
 
 int count_fields(const char * str, char sep) {
     const char * start = str;
@@ -21,7 +23,8 @@ int count_fields(const char * str, char sep) {
 }
 
 int main(void) {
-    char buffer[1024];
+    // char outBuf[BUFSIZE];
+    // char inBuf[BUFSIZE];
 
     char * line = NULL;
     size_t len = 0;
@@ -37,15 +40,16 @@ int main(void) {
 
     int num_fields = 0;
 
-    setbuf(stdout, buffer);
+    setvbuf(stdout, NULL, _IOFBF, BUFSIZE);
+    setvbuf(stdin,  NULL, _IOFBF, BUFSIZE);
 
     while ((line_len = getline(&line, &len, stdin)) != -1) {
         line[--line_len] = '\0';
         value = strchr(line, '\t');
         if (value) {
             key_len = value++ - line;
+            strncpy(key, line, key_len);
             key[key_len] = '\0';
-            memcpy(key, line, key_len);
 
             if (!memcmp(key, "NodeId:", 2)) {
                 id = key + 7;
@@ -81,6 +85,16 @@ int main(void) {
             } else if (!memcmp(key, "N:", 2)) {
                 id = key + 2;
 
+                // for (char* end = line; *end; end++)
+                //     printf("%d ", (int)*end);
+                // printf("\n");
+                // for (char* end = id; *end; end++)
+                //     printf("%d ", (int)*end);
+                // printf("\n");
+                // printf("line = %s\n", line);
+                // printf("id = %s;\n", id);
+                // printf("val = %s;\n", value);
+
                 char * end;
 
                 // attr[0]
@@ -98,7 +112,7 @@ int main(void) {
                     printf("%s\t%f,%s\n", id, rankToGive, id);
                 } else if (*end) {
                     rankToGive /= deg;
-                    if (cpr < DLINE && (rankToGive < SLINE || rankToGive > -SLINE)) {
+                    if (cpr < DLINE && (rankToGive < SLINE && rankToGive > -SLINE)) {
                         dead = 1;
                         printf("%s\tD\n", id);
                     } else {
@@ -106,10 +120,17 @@ int main(void) {
                         for (; *end; ++end) {
                             if (*end != ',')
                                 putchar(*end);
-                            else
+                            else {
                                 printf("\t%f,%s\n", rankToGive, id);
+                // printf("line = %s\n", line);
+                // printf("id = %s;\n", id);
+                // printf("val = %s;\n", value);
+                            }
                         }
                         printf("\t%f,%s\n", rankToGive, id);
+                // printf("line = %s\n", line);
+                // printf("id = %s;\n", id);
+                // printf("val = %s;\n", value);
                     }
                 }
 
