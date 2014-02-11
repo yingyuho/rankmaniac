@@ -6,7 +6,7 @@ from itertools import groupby, imap
 from operator import itemgetter
 from math import sqrt
 
-init_epsilon = 3E-4
+epsilon = 2E-3
 
 def read_input(f):
     for line in iter(f.readline, ''):
@@ -39,11 +39,9 @@ def main():
     rank.sort(key = itemgetter(1), reverse = True)
     toppages = rank[:topcount]
     
-    epsilon = init_epsilon
     toStop = True
     for i in range(1, topcount):
-        diffthresh = min((toppages[i - 1][1] - toppages[i][1]) * 2 / toppages[i][1], epsilon)
-        if (abs(toppages[i][1] - toppages[i][2]) / toppages[i][2] > diffthresh):
+        if (abs(toppages[i][1] - toppages[i][2]) / toppages[i][2] > epsilon):
             toStop = False
     
     if toStop:

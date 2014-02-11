@@ -2,7 +2,7 @@
 
 import sys
 
-steadyline = 1e-5
+steadyline = 1E-4
 init_deathline = 0.8
 alpha = 0.85
 
@@ -43,7 +43,7 @@ def main():
             elif len(attr) == 4:
                 neighbours = attr[3].split(',')
                 rankToGive = dpr / deg
-                if abs(rankToGive) < steadyline and cpr < deathline:
+                if abs(rankToGive) < steadyline and cpr < init_deathline:
                     dead = True
                 else:
                     for nb in neighbours:
