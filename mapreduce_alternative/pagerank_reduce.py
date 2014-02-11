@@ -22,6 +22,7 @@ for key, group in groupby(read_input(sys.stdin), itemgetter(0)):
     profile = None
     dead = False
     incoming = []
+    edgeToDelete = []
 
     for attr in imap(itemgetter(1), group):
             
@@ -32,7 +33,7 @@ for key, group in groupby(read_input(sys.stdin), itemgetter(0)):
                 prn += float(profile[1])
             else:
                 profile[1] = '1.0'
-
+        # attr = D,<dead node>
         elif attr[0] == 'D':
             dead = True
         else:
@@ -41,10 +42,8 @@ for key, group in groupby(read_input(sys.stdin), itemgetter(0)):
             incoming.append(source[1])
 
     if dead:
-        for source in incoming:
-            if (source != node_id):
-                sys.stdout.write('%s\tD,%s\n' % (source, node_id))
-            
+        sys.stdout.write(''.join(['%s\tD,%s\n' % (node_id, source) 
+            for source in incoming if source != node_id]))
     else:
         if profile != None:
             if len(profile) == 4:
@@ -52,6 +51,5 @@ for key, group in groupby(read_input(sys.stdin), itemgetter(0)):
             else:
                 sys.stdout.write('%s\t%s,%s,%s\n' % (node_id, profile[0], prn, profile[1]))
         else:
-            for source in incoming:
-                if (source != node_id):
-                    sys.stdout.write('%s\tD,%s\n' % (source, node_id))
+            sys.stdout.write(''.join(['%s\tD,%s\n' % (node_id, source) 
+                for source in incoming if source != node_id]))

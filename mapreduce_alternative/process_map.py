@@ -8,6 +8,10 @@ def read_input(f):
     for line in iter(f.readline, ''):
         yield line.rstrip('\n').split('\t', 1)
 
+def identity():
+    for line in iter(sys.stdin.readline, ''):
+        sys.stdout.write(line)
+
 def main():
     for key, group in groupby(read_input(sys.stdin), itemgetter(0)):
         node_id = key

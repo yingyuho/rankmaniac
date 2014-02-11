@@ -38,24 +38,38 @@ def main():
             cpr = float(attr[1])
             ppr = float(attr[2])
             dpr = cpr - ppr
+
             if deg == 0:
                 sys.stdout.write('%s\t%s,%s\n' % (nid, str(dpr),nid))
             elif len(attr) == 4:
                 neighbours = attr[3].split(',')
                 rankToGive = dpr / deg
                 if abs(rankToGive) < steadyline and cpr < init_deathline:
-                    dead = True
+                    # dead = True
+                    sys.stdout.write('%s\tD\n' % (nid, ))
                 else:
-                    for nb in neighbours:
-                        sys.stdout.write('%s\t%s,%s\n' % (nb, rankToGive, nid))
-                if (cpr > deathline):
-                    deathline = deathline * 0.98 + cpr * 0.02
-            if dead:
-                sys.stdout.write('%s\tD,%s\n' % (nid, value))
-            else:
+                    sys.stdout.write('%s\tP,%s\n' % (nid, value))
+                    sys.stdout.write(''.join(['%s\t%s,%s\n' % (nb, rankToGive, nid) 
+                        for nb in neighbours]))
+                # if (cpr > deathline):
+                #     deathline = deathline * 0.98 + cpr * 0.02
+
+            if not dead:
+            #     sys.stdout.write('%s\tD,%s\n' % (nid, value))
+            # else:
                 sys.stdout.write('%s\tP,%s\n' % (nid, value))
-        else:
-            raise NameError('FinalRankObtained')
+
+        # key.startswith('FinalRank:')
+        elif key[0] == 'F':
+            # Remove tag
+            rank = key[10:]
+
+            nodeid = value
+
+            if rank == '':
+                sys.stdout.write('%s\tF\n' % (nodeid, ))
+            else:
+                sys.stdout.write('%s\tF,%s\n' % (nodeid, rank))
                     
                 
 
