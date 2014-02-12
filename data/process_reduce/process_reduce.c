@@ -48,9 +48,13 @@ int main(void) {
             node_id = strtol(key, &end, 10);
             if (!memcmp(value, "F", 1)) {
                 end = value + 2;
+                final = 1;
                 if (*end)
                     cpr = strtof(end, &end);
-                printf("FinalRank:%f\t%d\n", cpr, node_id);
+                (&pr)->node_id = node_id;
+                (&pr)->cpr = cpr;
+                (&pr)->ppr = 0;
+                add_value(&prHeap, &pr);
             }
             else {
                 deg = strtol(value, &end, 10); ++end;
@@ -85,7 +89,7 @@ int main(void) {
             toStop = 0;
         curr_toppage++;
     }
-    if (toStop) {
+    if (toStop || final) {
         i = 29;
         while ((&prHeap)->num_values) {
             get_first_value(&prHeap, &(toppr[i]));
