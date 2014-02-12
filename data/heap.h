@@ -23,15 +23,16 @@ typedef struct
   pageRank values[MAX_HEAP_ELEMS];
 } float_heap;
 
+void copy_PR(pageRank *src, pageRank *dst);
 
 /* Initialize a heap data structure. */
 void init_heap(float_heap *pHeap);
 
 /* Returns the first (i.e. smallest) value in the heap. */
-float get_first_value(float_heap *pHeap);
+void get_first_value(float_heap *pHeap, pageRank *buf);
 
 /* Adds another value to the heap, in the proper place. */
-void add_value(float_heap *pHeap, float newval);
+void add_value(float_heap *pHeap, pageRank * newval);
 
 #endif /* __HEAP_H__ */
 

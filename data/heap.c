@@ -72,8 +72,6 @@ void get_first_value(float_heap *pHeap, pageRank * buf)
      */
     sift_down(pHeap, 0);
   }
-
-  return result;
 }
 
 
@@ -84,6 +82,7 @@ void add_value(float_heap *pHeap, pageRank * newval)
 
   assert(pHeap != NULL);
   assert(pHeap->num_values >= 0);
+  assert(pageRank != NULL);
 
   /* There needs to be room for one more element in the heap... */
   assert(pHeap->num_values < MAX_HEAP_ELEMS);
