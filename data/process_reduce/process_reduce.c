@@ -29,6 +29,7 @@ int main(void) {
     float cpr, ppr;
     int i;
     float toppages[TOPNUM];
+    char *finalranks[30];
     
     float_heap prHeap;
     pageRank pr;
@@ -85,10 +86,14 @@ int main(void) {
         curr_toppage++;
     }
     if (toStop) {
+        i = 29;
         while ((&prHeap)->num_values) {
             get_first_value(&prHeap, &pr);
-            printf("FinalRank:%f\t%d\n", (&pr)->cpr, (&pr)->node_id);
+            finalranks[i] = ("FinalRank:%f\t%d\n", (&pr)->cpr, (&pr)->node_id);
+            i--;
         }
+        for (i = 0; i < 30; i++)
+            printf(finalranks[i]);
     }
     return 0;
 }
