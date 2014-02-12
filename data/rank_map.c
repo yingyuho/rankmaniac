@@ -4,122 +4,102 @@
 
 #define A       0.85f
 #define SLINE   1E-5f
-#define DLINE   0.8f
+#define DLINE   0.f
 
 #define BUFSIZE 4096
 
 int count_fields(const char * str, char sep) {
-    const char * start = str;
-    const char * end;
-
     int n = (*str != '\0');
 
-    while ((end = strchr(start, sep)) != NULL) {
+    while ((str = strchr(str, sep)) != NULL) {
         ++n;
-        start = end + 1;
+        ++str;
     }
 
     return n;
 }
 
 int main(void) {
-    // char outBuf[BUFSIZE];
-    // char inBuf[BUFSIZE];
-
     char * line = NULL;
+
     size_t len = 0;
     ssize_t line_len;
-    char key[32];
-    char * id = NULL;
 
-    ssize_t key_len;
-    char * value = NULL;
+    char * key;
+    char * id;
 
-    char * start = NULL;
-    char * end = NULL;
+    char * value;
+    char * field;
 
-    int num_fields = 0;
-
-    setvbuf(stdout, NULL, _IOFBF, BUFSIZE);
-    setvbuf(stdin,  NULL, _IOFBF, BUFSIZE);
+    // setvbuf(stdout, NULL, _IOFBF, BUFSIZE);
+    // setvbuf(stdin,  NULL, _IOFBF, BUFSIZE);
 
     while ((line_len = getline(&line, &len, stdin)) != -1) {
+        // rstrip
         line[--line_len] = '\0';
         value = strchr(line, '\t');
+
+        // strsep() will replace '\t' by '\0' and point value
+        // to the character following '\t'
         if (value) {
-            key_len = value++ - line;
-            strncpy(key, line, key_len);
-            key[key_len] = '\0';
+            *value++ = '\0';
+            key = line;
 
             if (!memcmp(key, "NodeId:", 2)) {
                 id = key + 7;
 
                 int deg = count_fields(value, ',') - 2;
 
-                printf("%s\tP,%d,%s,%s\n", id, deg, "0.0", value + 4);
+                // Get attr[0] and convert to float
+                field = strsep(&value, ",");
+                float rankToGive = strtof(field, NULL);
 
-                printf("%s\t%f,%s\n", id, (1. - A) / A, id);
+                printf("%s\tP,%d,%f,%s\n", id, deg, (1. - A), value);
 
-                float rankToGive = strtof(value, &end);
-
-                char * end;
-
-                rankToGive = strtof(value, &end);
+                // Skip attr[1]
+                strsep(&value, ",");
 
                 if (deg) {
                     rankToGive /= (float) deg;
-
-                    for (end = strchr(end + 1, ',') + 1; *end; ++end) {
-                        if (*end != ',')
-                            putchar(*end);
-                        else
-                            printf("\t%f,%s\n", rankToGive, id);
-                    }
-                    printf("\t%f,%s\n", rankToGive, id);
-
+                    // Process attr[i], i >= 2
+                    while ((field = strsep(&value, ",")) != NULL)
+                        printf("%s\t%f\n", field, rankToGive);
+                        // printf("%s\t%f,%s\n", field, rankToGive, id);
                 } else {
-                    rankToGive = strtof(value, &end);
-                    printf("%s\t%f,%s\n", id, rankToGive, id);
+                    printf("%s\t%f\n", id, rankToGive);
                 }
 
             } else if (!memcmp(key, "N:", 2)) {
                 id = key + 2;
 
-                char * end;
+                // Parse attr[0]
+                int deg = strtol(value, &field, 10); ++field;
 
-                // attr[0]
-                int deg = strtol(value, &end, 10); ++end;
-                // printf("%s\n", end);
-                // attr[1]
-                float cpr = strtof(end, &end); ++end;
-                // attr[2]
-                float ppr = strtof(end, &end); ++end;
+                // Parse attr[1]
+                float cpr = strtof(field, &field); ++field;
+
+                // Parse attr[2]
+                float ppr = strtof(field, &field); ++field;
+
                 float rankToGive = cpr - ppr;
 
                 int dead = 0;
 
                 if (deg == 0) {
-                    printf("%s\t%f,%s\n", id, rankToGive, id);
-                } else if (*end) {
+                    printf("%s\t%f\n", id, rankToGive);
+                } else {
                     rankToGive /= deg;
                     if (cpr < DLINE && (rankToGive < SLINE && rankToGive > -SLINE)) {
                         dead = 1;
-                    } else {
-                        // attr[n], n>2
-                        for (; *end; ++end) {
-                            if (*end != ',')
-                                putchar(*end);
-                            else {
-                                printf("\t%f,%s\n", rankToGive, id);
-                // printf("line = %s\n", line);
-                // printf("id = %s;\n", id);
-                // printf("val = %s;\n", value);
-                            }
+                    } else if (*(field - 1) != '\0') {
+                        // attr[i], i > 2
+                        char * end = field;
+                        while ((field = strsep(&end, ",")) != NULL) {
+                            printf("%s\t%f\n", field, rankToGive);
+                            // put ',' back to '\0' created by strsep()
+                            // so value is a single string again
+                            *(--field) = ',';
                         }
-                        printf("\t%f,%s\n", rankToGive, id);
-                // printf("line = %s\n", line);
-                // printf("id = %s;\n", id);
-                // printf("val = %s;\n", value);
                     }
                 }
 

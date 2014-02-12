@@ -38,7 +38,7 @@ void copy_PR(pageRank * src, pageRank * dst)
 {
   dst->node_id = src->node_id;
   dst->cpr = src->cpr;
-  dst->ppr = src->cpr;
+  dst->ppr = src->ppr;
 }
 
 
