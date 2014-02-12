@@ -46,7 +46,10 @@ int main(void) {
             
             node_id = strtol(key, &end, 10);
             if (!memcmp(value, "F", 1)) {
-                final = 1;
+                end = value + 2;
+                if (*end)
+                    cpr = strtof(end, &end);
+                printf("FinalRank:%f\t%d\n", cpr, node_id);
             }
             else {
                 deg = strtol(value, &end, 10); ++end;

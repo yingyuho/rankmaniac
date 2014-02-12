@@ -200,6 +200,8 @@ void sift_up(float_heap *pHeap, int index)
   /* If the index to sift up is the root, we are done. */
   if (index == 0)
     return;
+  if (index == 1)
+    parent_index = 0;
 
   assert(parent_index >= 0);
   assert(parent_index != index);  /* Parent of index 0 = 0... that's bad. */
