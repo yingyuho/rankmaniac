@@ -92,7 +92,7 @@ int main(void) {
             i--;
         }
         for (i = 0; i < 20; i++)
-            printf("FinalRank:%f\t%d\n", (&(pr[i]))->cpr, (&(pr[i]))->node_id);
+            printf("FinalRank:%f\t%d\n", (&(toppr[i]))->cpr, (&(toppr[i]))->node_id);
     }
     return 0;
 }
