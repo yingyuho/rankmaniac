@@ -55,7 +55,7 @@ void end_of_key(void) {
 
     if (!finalized && hasProfile) {
         // updated PR
-        prn += prc;
+        // prc += prn * A;
 
         end = profile;
 
@@ -66,7 +66,7 @@ void end_of_key(void) {
         // Get attr[1] = degree and print the first piece
         field = strsep(&end, ",");
 
-        printf("%s\t%s,%f", prev_key, field, prn);
+        printf("%s\t%s,%f", prev_key, field, prc + prn * A);
 
         // Get and print attr[2] = current PR
         field = strsep(&end, ",");

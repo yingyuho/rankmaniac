@@ -3,8 +3,8 @@
 #include <string.h>
 
 #define A       0.85f
-#define SLINE   1E-5f
-#define DLINE   0.f
+#define SLINE   1E-4f
+#define DLINE   0.8f
 
 #define BUFSIZE 4096
 
@@ -54,8 +54,10 @@ int main(void) {
                 field = strsep(&value, ",");
                 float rankToGive = strtof(field, NULL);
 
-                printf("%s\tP,%d,%f,%s\n", id, deg, 0.0, value);
-                printf("%s\t%f\n", id, (1. - A) / A);
+                // printf("%s\tP,%d,%f,%s\n", id, deg, 0.0, value);
+                // printf("%s\t%f\n", id, (1. - A) / A);
+                printf("%s\tP,%d,%f,%s\n", id, deg, 1.0, value);
+                printf("%s\t%f\n", id, -1.0);
 
                 // Skip attr[1]
                 strsep(&value, ",");
