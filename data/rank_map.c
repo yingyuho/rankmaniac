@@ -6,7 +6,7 @@
 #define SLINE   1E-5f
 #define DLINE   0.8f
 
-#define BUFSIZE 2048
+#define BUFSIZE 4096
 
 int count_fields(const char * str, char sep) {
     const char * start = str;
@@ -84,16 +84,6 @@ int main(void) {
 
             } else if (!memcmp(key, "N:", 2)) {
                 id = key + 2;
-
-                // for (char* end = line; *end; end++)
-                //     printf("%d ", (int)*end);
-                // printf("\n");
-                // for (char* end = id; *end; end++)
-                //     printf("%d ", (int)*end);
-                // printf("\n");
-                // printf("line = %s\n", line);
-                // printf("id = %s;\n", id);
-                // printf("val = %s;\n", value);
 
                 char * end;
 
