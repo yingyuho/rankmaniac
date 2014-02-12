@@ -51,7 +51,8 @@ void get_first_value(float_heap *pHeap, pageRank * buf)
   assert(pHeap->num_values > 0);
 
   /* Smallest value is at the root - index 0. */
-  copy_PR(&(pHeap->values[0]), buf);
+  if (buf)
+    copy_PR(&(pHeap->values[0]), buf);
 
   /* Decrease the count of how many values are in the heap.
    * NOTE that if there was more than one value in the heap,
@@ -64,8 +65,7 @@ void get_first_value(float_heap *pHeap, pageRank * buf)
   if (pHeap->num_values)
   {
     /* Move the last value in the heap to the root. */
-    if (buf)
-        copy_PR(&(pHeap->values[pHeap->num_values]), &(pHeap->values[0]));
+    copy_PR(&(pHeap->values[pHeap->num_values]), &(pHeap->values[0]));
 
     /* Sift down the new value to position it properly
      * in the heap.
@@ -234,8 +234,8 @@ void swap_values(float_heap *pHeap, int i, int j)
   assert(j >= 0 && j < pHeap->num_values);
   assert(i != j);
 
-  copyPR(&(pHeap->values[i]), &tmp);
-  copyPR(&(pHeap->values[j]), &(pHeap->values[i]));
-  copyPR(&tmp, &(pHeap->values[j]));
+  copy_PR(&(pHeap->values[i]), &tmp);
+  copy_PR(&(pHeap->values[j]), &(pHeap->values[i]));
+  copy_PR(&tmp, &(pHeap->values[j]));
 }
 
