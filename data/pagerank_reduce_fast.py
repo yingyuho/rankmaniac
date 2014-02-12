@@ -36,9 +36,6 @@ for key, group in groupby(read_input(sys.stdin), itemgetter(0)):
                 prn += float(profile[1])
             else:
                 profile[1] = '1.0'
-        # attr = D,<dead node>
-        elif attr[0] == 'D':
-            dead = True
         # attr = F, <rank> or F
         elif attr[0] == 'F':
             final = True
@@ -52,15 +49,9 @@ for key, group in groupby(read_input(sys.stdin), itemgetter(0)):
     if final:
         if prf != None:
             sys.stdout.write('%s\t%s\n' % (node_id, prf))
-    elif dead:
-        sys.stdout.write(''.join(['%s\tD,%s\n' % (source, node_id) 
-            for source in incoming if source != node_id]))
     else:
         if profile != None:
             if len(profile) == 4:
                 sys.stdout.write('%s\t%s,%s,%s,%s\n' % (node_id, profile[0], prn, profile[1], profile[3]))
             else:
                 sys.stdout.write('%s\t%s,%s,%s\n' % (node_id, profile[0], prn, profile[1]))
-        else:
-            sys.stdout.write(''.join(['%s\tD,%s\n' % (source, node_id) 
-                for source in incoming if source != node_id]))

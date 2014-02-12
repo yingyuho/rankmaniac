@@ -104,7 +104,6 @@ int main(void) {
                     rankToGive /= deg;
                     if (cpr < DLINE && (rankToGive < SLINE && rankToGive > -SLINE)) {
                         dead = 1;
-                        printf("%s\tD\n", id);
                     } else {
                         // attr[n], n>2
                         for (; *end; ++end) {

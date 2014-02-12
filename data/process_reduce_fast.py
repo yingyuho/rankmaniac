@@ -30,16 +30,11 @@ def main():
 
     for node_id, group in groupby(read_input(sys.stdin), itemgetter(0)):
 
-        toRemove = []
-
         profile = None
         
         for attr in imap(itemgetter(1), group):
             # if node_id == '885605':
             #     sys.stderr.write('%s\n' % attr)
-            if attr[0] == 'D':
-                toRemove.append(attr[2:])
-                a += 1
 
             elif attr[0] == 'F':
                 # sys.stderr.write('F\n')
@@ -53,19 +48,13 @@ def main():
                 cpr = float(profile[1])
                 ppr = float(profile[2])
 
-                if cpr > 1.0:
+                if cpr > 100:
                     rank.append([node_id, cpr, ppr])
                     nodeCount += 1
 
                 c += 1
 
         if not final:
-            if toRemove and profile and len(profile) == 4:
-
-                profile[3] = join([x for x in profile[3].split(',') if x not in toRemove], ',')
-
-                if profile[3] == '':
-                    del profile[3]
 
             sys.stdout.write('N:%s\t%s\n' % (node_id, join(profile, ',')))
             allNodeID.append(int(node_id))
