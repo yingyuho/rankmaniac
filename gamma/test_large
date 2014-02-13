@@ -1,0 +1,7 @@
+cp ../local_test_data/EmailEnron graph.out
+for i in {1..26}
+do
+cp graph.out input.out
+./rmap < input.out | sort | ./rreduce | ./rawcat | ./preduce > graph.out
+echo $i
+done
