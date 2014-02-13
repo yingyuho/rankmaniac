@@ -30,8 +30,8 @@ static char * curr_value;
 static char * field;
 static char * end;
 
-static float prc = 0.f;
-static float prn = 0.f;
+static double prc = 0.0;
+static double prn = 0.0;
 
 static int finalized = 0;
 static int hasProfile = 0;
@@ -40,7 +40,7 @@ static int hasProfile = 0;
 
 // TODO: something based on prev_line, prev_key, prev_value when key changes or EOF
 void end_of_key(void) {
-    
+
 /*
  * # Python equivalent
  *
@@ -91,6 +91,9 @@ void swap_ptr(size_t * a, size_t * b) {
 
 
 int main(void) {
+    setvbuf(stdout, NULL, _IOFBF, BUFSIZE);
+    setvbuf(stdin,  NULL, _IOFBF, BUFSIZE);
+
     curr_line = lines[line_to_use];
     curr_key = keys;
     prev_key = keys + KEYSIZE;
@@ -134,7 +137,7 @@ int main(void) {
 
                     // Parse attr[2] = current PR
                     field = strsep(&end, ",");
-                    prc = strtof(field, NULL);
+                    prc = strtod(field, NULL);
                     *(--field) = ',';
 
                     if (*end != '\0')
@@ -142,7 +145,7 @@ int main(void) {
 
                 } else {
                     // Parse attr[0] = PR to add to NodeID = key
-                    prn += strtof(curr_value, NULL);
+                    prn += strtod(curr_value, NULL);
                 }
             }
             // End TODO

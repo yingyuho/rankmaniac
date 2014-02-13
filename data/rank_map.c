@@ -31,8 +31,8 @@ int main(void) {
     char * value;
     char * field;
 
-    // setvbuf(stdout, NULL, _IOFBF, BUFSIZE);
-    // setvbuf(stdin,  NULL, _IOFBF, BUFSIZE);
+    setvbuf(stdout, NULL, _IOFBF, BUFSIZE);
+    setvbuf(stdin,  NULL, _IOFBF, BUFSIZE);
 
     while ((line_len = getline(&line, &len, stdin)) != -1) {
         // rstrip
@@ -50,9 +50,9 @@ int main(void) {
 
                 int deg = count_fields(value, ',') - 2;
 
-                // Get attr[0] and convert to float
+                // Get attr[0] and convert to double
                 field = strsep(&value, ",");
-                float rankToGive = strtof(field, NULL);
+                double rankToGive = strtod(field, NULL);
 
                 printf("%s\tP,%d,%f,%s\n", id, deg, 1.0, value);
                 printf("%s\t%f\n", id, -1.0);
@@ -61,7 +61,7 @@ int main(void) {
                 strsep(&value, ",");
 
                 if (deg) {
-                    rankToGive /= (float) deg;
+                    rankToGive /= (double) deg;
                     // Process attr[i], i >= 2
                     while ((field = strsep(&value, ",")) != NULL)
                         printf("%s\t%f\n", field, rankToGive);
@@ -77,12 +77,12 @@ int main(void) {
                 int deg = strtol(value, &field, 10); ++field;
 
                 // Parse attr[1]
-                float cpr = strtof(field, &field); ++field;
+                double cpr = strtod(field, &field); ++field;
 
                 // Parse attr[2]
-                float ppr = strtof(field, &field); ++field;
+                double ppr = strtod(field, &field); ++field;
 
-                float rankToGive = cpr - ppr;
+                double rankToGive = cpr - ppr;
 
                 int dead = 0;
 

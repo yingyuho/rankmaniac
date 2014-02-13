@@ -4,11 +4,13 @@
 #include "heap.h"
 
 #define RLINE 100
-#define BUFSIZE 2048
+#define BUFSIZE 4096
 #define TOPNUM 30
 #define EPSILON 2E-3f
 
 int main(void) {
+    setvbuf(stdout, NULL, _IOFBF, BUFSIZE);
+    setvbuf(stdin,  NULL, _IOFBF, BUFSIZE);
 
     size_t all_id_cap = 131072;
     size_t all_id_len = 0;
