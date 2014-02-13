@@ -40,6 +40,7 @@ static int hasProfile = 0;
 
 // TODO: something based on prev_line, prev_key, prev_value when key changes or EOF
 void end_of_key(void) {
+    
 /*
  * # Python equivalent
  *
@@ -51,11 +52,8 @@ void end_of_key(void) {
  *         else:
  *            sys.stdout.write('%s\t%s,%s,%s\n' % (node_id, profile[0], prn, profile[1]))
  */
-    // printf("key: %s => %s\n", prev_key, curr_key);
 
     if (!finalized && hasProfile) {
-        // updated PR
-        prn += prc;
 
         end = profile;
 
@@ -66,7 +64,7 @@ void end_of_key(void) {
         // Get attr[1] = degree and print the first piece
         field = strsep(&end, ",");
 
-        printf("%s\t%s,%f", prev_key, field, prn);
+        printf("%s\t%s,%f", prev_key, field, prc + prn * A);
 
         // Get and print attr[2] = current PR
         field = strsep(&end, ",");
@@ -142,14 +140,9 @@ int main(void) {
                     if (*end != '\0')
                         *(end-1) = ',';
 
-                    // if ((field = strsep(&end, ",")) != NULL) {
-                    //     prc = strtof(field, NULL);
-                    //     *(--field) = ',';
-                    // }
                 } else {
                     // Parse attr[0] = PR to add to NodeID = key
                     prn += strtof(curr_value, NULL);
-                    // printf("prn = %f\n", prn);
                 }
             }
             // End TODO

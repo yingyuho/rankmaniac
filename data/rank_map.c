@@ -4,7 +4,7 @@
 
 #define A       0.85f
 #define SLINE   1E-5f
-#define DLINE   0.8f
+#define DLINE   3.0f
 
 #define BUFSIZE 4096
 
@@ -30,6 +30,8 @@ int main(void) {
 
     char * value;
     char * field;
+
+    float deathline = DLINE;
 
     setvbuf(stdout, NULL, _IOFBF, BUFSIZE);
     setvbuf(stdin,  NULL, _IOFBF, BUFSIZE);
@@ -90,7 +92,7 @@ int main(void) {
                     printf("%s\t%f\n", id, rankToGive);
                 } else {
                     rankToGive /= deg;
-                    if (cpr < DLINE && (rankToGive < SLINE && rankToGive > -SLINE)) {
+                    if (cpr < deathline && (rankToGive < SLINE && rankToGive > -SLINE)) {
                         dead = 1;
                     } else if (*(field - 1) != '\0') {
                         // attr[i], i > 2
