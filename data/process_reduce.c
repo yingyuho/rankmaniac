@@ -9,6 +9,10 @@
 #define EPSILON 2E-3f
 
 int main(void) {
+
+    size_t all_id_cap = 131072;
+    size_t all_id_len = 0;
+    int * all_id = (int*) malloc(all_id_cap * sizeof(int*));
     
     char * line = NULL;
     size_t len = 0;
@@ -64,6 +68,13 @@ int main(void) {
                 (&pr)->node_id = node_id;
                 (&pr)->cpr = cpr;
                 (&pr)->ppr = ppr;
+
+                // store all node id for cancelling profiles during final round
+                all_id[all_id_len++] = node_id;
+                if (all_id_len == all_id_cap) {
+                    all_id_cap *= 2;
+                    all_id = (int*) realloc(all_id, all_id_cap * sizeof(int*));
+                }
                 
                 if ((&prHeap)->num_values < TOPNUM) {
                     add_value(&prHeap, &pr);
@@ -89,6 +100,7 @@ int main(void) {
             toStop = 0;
         curr_toppage++;
     }
+
     if (toStop || final) {
         i = 29;
         while ((&prHeap)->num_values) {
@@ -97,6 +109,10 @@ int main(void) {
         }
         for (i = 0; i < 30; i++)
             printf("FinalRank:%f\t%d\n", (&(toppr[i]))->cpr, (&(toppr[i]))->node_id);
+
+        if (!final)
+            for (i = 0; i < all_id_len; i++)
+                printf("FinalRank:\t%d\n", all_id[i]);
     }
     return 0;
 }
