@@ -5,7 +5,7 @@
 
 #define RLINE 100
 #define BUFSIZE 4096
-#define TOPNUM 30
+#define TOPNUM 20
 #define EPSILON 2E-3f
 
 int main(void) {
@@ -104,12 +104,12 @@ int main(void) {
     }
 
     if (toStop || final) {
-        i = 29;
+        i = TOPNUM - 1;
         while ((&prHeap)->num_values) {
             get_first_value(&prHeap, &(toppr[i]));
             i--;
         }
-        for (i = 0; i < 20; i++)
+        for (i = 0; i < TOPNUM; i++)
             printf("FinalRank:%f\t%d\n", (&(toppr[i]))->cpr, (&(toppr[i]))->node_id);
 
         if (!final)
