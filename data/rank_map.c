@@ -54,8 +54,6 @@ int main(void) {
                 field = strsep(&value, ",");
                 float rankToGive = strtof(field, NULL);
 
-                // printf("%s\tP,%d,%f,%s\n", id, deg, 0.0, value);
-                // printf("%s\t%f\n", id, (1. - A) / A);
                 printf("%s\tP,%d,%f,%s\n", id, deg, 1.0, value);
                 printf("%s\t%f\n", id, -1.0);
 
