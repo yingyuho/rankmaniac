@@ -98,7 +98,8 @@ int main(void) {
     for (i = 0; i < TOPNUM; i++) {
         cpr = curr_toppage->cpr;
         ppr = curr_toppage->ppr;
-        if ((cpr - ppr) / ppr > EPSILON || (cpr - ppr) / ppr < -EPSILON)
+        /*if ((cpr - ppr) / ppr > EPSILON || (cpr - ppr) / ppr < -EPSILON)*/
+        if (ppr == 1)
             toStop = 0;
         curr_toppage++;
     }
