@@ -1,0 +1,4 @@
+./rmap |
+sort -k1,1 -s -n |
+./rreduce |
+./preduce

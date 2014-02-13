@@ -1,0 +1,8 @@
+PROG=./test_c
+let rep=$3-1
+if [ "$rep" -gt 0 ]
+then
+{ printf $PROG' < '$1  ; printf '%.0s| '$PROG' ' $(eval echo {1..$rep}) ; printf '> '$2 ; } | sh
+else
+{ printf $PROG' < '$1' > '$2 ; } | sh
+fi
