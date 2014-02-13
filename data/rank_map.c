@@ -3,7 +3,7 @@
 #include <string.h>
 
 #define A       0.85f
-#define SLINE   1E-4f
+#define SLINE   1E-5f
 #define DLINE   0.8f
 
 #define BUFSIZE 4096

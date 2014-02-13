@@ -153,7 +153,7 @@ int main(void) {
             // Swap key buffers
             swap_ptr((size_t*) &curr_key, (size_t*) &prev_key);
 
-            curr_line = lines[line_to_use ^= 1];
+            curr_line = lines[(line_to_use ^= 1)];
         }
     }
 

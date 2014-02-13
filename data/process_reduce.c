@@ -109,7 +109,7 @@ int main(void) {
             get_first_value(&prHeap, &(toppr[i]));
             i--;
         }
-        for (i = 0; i < 30; i++)
+        for (i = 0; i < 20; i++)
             printf("FinalRank:%f\t%d\n", (&(toppr[i]))->cpr, (&(toppr[i]))->node_id);
 
         if (!final)
