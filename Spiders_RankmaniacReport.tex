@@ -62,8 +62,8 @@
 
 \section{Division of Work}
 \begin{itemize}
-\item Ying-yu Ho:
-\item Jianchi Chen:
+\item Ying-yu Ho: IO-flow optimization and bug-fix; implementation of final version Pagerank-map and Pagerank-reduce.
+\item Jianchi Chen: design and optimization of PR-update and sorting algorithm; implementation of final version Process_reduce and heap.
 \item Kexin Rong: implementation of initial working version; project report write up. 
 \end{itemize}
 
@@ -126,7 +126,7 @@ Here is the detailed algorithm:
 \item \emph{Rationale:} 
 We've noticed during the tests, that there are a large number of trivial nodes with pageranks that converges rather fast. Including them in every iteration wastes out time in calculation and doing IO.
 \item  \emph{Approach:} 
-In pagerank\_map, only emit the change in PR.  \\
+In pagerank\_map, only emit the change in PR, instead of the absolute value of PR.  \\
 For example,  $<$node\_id $\backslash$ t cpr, ppr, $n_1, n_2$, .... $\backslash$n$>$
 now maps to:\\
 $<n_1 \backslash$t  (cpr - ppr) / d $\backslash$n$>$,  ..., $<n_d \backslash$t  (cpr - ppr) / d  $\backslash$n$>$ \\
@@ -141,7 +141,7 @@ Runtime on first trial: 1:36:21  +  6:41:00  =  8:17:21. We figured the reasons 
 \item Deathline is not small enough. As a result we cut out too many nodes and got a large penalty. 
 \item This optimization reduces the runtime of pagerank\_reduce, but increase the run time of pagerank\_map. In a parallel environment, the latter becomes a bottleneck. One solution is to reimplement the map procedure in C.
 \end{enumerate}
-As a result, we refactored the entire code base into C.  The runtime on Amazon server went down to  1:15:44  +  0:01:00  =  1:16:44, which was not  as much as we had expected. We haven't figured out why. However, when tested locally, the run time on web google drops from 40s per iteration to 10s per iteration. The number of iterations needed also dropped from 40 to 25.\\
+As a result, we refactored the entire code base into C.  The runtime on Amazon server went down to  1:15:44  +  0:01:00  =  1:16:44, which was not as much as we had expected. We haven't figured out why. However, when tested locally, the run time on web google (800,000 nodes) drops from 40s per iteration to 10s per iteration. The number of iterations needed also dropped from 40 to 25.\\
 
 \end{itemize}
 
