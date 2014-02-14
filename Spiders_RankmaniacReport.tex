@@ -20,7 +20,7 @@
 \pagestyle{fancy}
 %\addtolength{\headwidth}{\marginparsep} %these change header-rule width
 %\addtolength{\headwidth}{\marginparwidth}
-\lhead{Ying-yu, Jianchi, Kexin}
+\lhead{Ying-Yu, Jianchi, Kexin}
 %\chead{Problem \thesection} 
 \chead{}
 \rhead{\thepage} 
@@ -40,7 +40,7 @@
 \assn{Project Report}
 \date{\today}
 \title{\courseName \sectName \\ \assnName}
-\author{Ying-yu Ho, Jianchi Chen, Kexin Rong}
+\author{Ying-Yu Ho, Jianchi Chen, Kexin Rong}
 \maketitle
 
 \thispagestyle{empty}
@@ -62,8 +62,8 @@
 
 \section{Division of Work}
 \begin{itemize}
-\item Ying-yu Ho: IO-flow optimization and bug-fix; implementation of final version Pagerank-map and Pagerank-reduce.
-\item Jianchi Chen: design and optimization of PR-update and sorting algorithm; implementation of final version Process_reduce and heap.
+\item Ying-Yu Ho: IO-flow optimization and bug-fix; implementation of final version pagerank\_map and pagerank\_reduce.
+\item Jianchi Chen: design and optimization of PR-update and sorting algorithm; implementation of final version process\_reduce and heap.
 \item Kexin Rong: implementation of initial working version; project report write up. 
 \end{itemize}
 
@@ -141,13 +141,14 @@ Runtime on first trial: 1:36:21  +  6:41:00  =  8:17:21. We figured the reasons 
 \item Deathline is not small enough. As a result we cut out too many nodes and got a large penalty. 
 \item This optimization reduces the runtime of pagerank\_reduce, but increase the run time of pagerank\_map. In a parallel environment, the latter becomes a bottleneck. One solution is to reimplement the map procedure in C.
 \end{enumerate}
-As a result, we refactored the entire code base into C.  The runtime on Amazon server went down to  1:15:44  +  0:01:00  =  1:16:44, which was not as much as we had expected. We haven't figured out why. However, when tested locally, the run time on web google (800,000 nodes) drops from 40s per iteration to 10s per iteration. The number of iterations needed also dropped from 40 to 25.\\
+As a result, we refactored the entire code base into C.  The runtime on Amazon server went down to  1:15:44  +  0:01:00  =  1:16:44, which was not as much as we had expected. We think that was due to time spent on I/O. However, when tested locally on a computer with SSD, the run time on web google (800,000 nodes) drops from 40s per iteration to 10s per iteration. The number of iterations needed also dropped from 40 to 25.\\
 
 \end{itemize}
 
 \section{References}
-http://www.michael-noll.com/tutorials/
-
-
+\begin{itemize}
+\item http://www.michael-noll.com/tutorials/
+\item http://www.cplusplus.com/reference/clibrary/
+\end{itemize}
 
 \end{document}
