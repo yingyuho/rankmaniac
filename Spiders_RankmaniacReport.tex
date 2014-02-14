@@ -1,0 +1,153 @@
+\documentclass[12pt]{article}
+
+%AMS-TeX packages
+\usepackage{amssymb,amsmath,amsthm} 
+%geometry (sets margin) and other useful packages
+\usepackage[margin=1.25in]{geometry}
+\usepackage{graphicx,ctable,booktabs}
+
+
+%
+%
+\newcommand{\course}[2]{\def\courseName{#1} \def\sectName{#2}}
+\newcommand{\assn}[1]{\def\assnName{#1}}
+\newcommand{\sect}[1]{\def\sectName{#1}}
+
+%
+%Fancy-header package to modify header/page numbering 
+%
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+%\addtolength{\headwidth}{\marginparsep} %these change header-rule width
+%\addtolength{\headwidth}{\marginparwidth}
+\lhead{Ying-yu, Jianchi, Kexin}
+%\chead{Problem \thesection} 
+\chead{}
+\rhead{\thepage} 
+\lfoot{\small\scshape \courseName} 
+\cfoot{} 
+\rfoot{\footnotesize \assnName} 
+\renewcommand{\headrulewidth}{.3pt} 
+\renewcommand{\footrulewidth}{.3pt}
+\setlength\voffset{-0.25in}
+\setlength\textheight{648pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\course{Rankmaniac}{}
+\assn{Project Report}
+\date{\today}
+\title{\courseName \sectName \\ \assnName}
+\author{Ying-yu Ho, Jianchi Chen, Kexin Rong}
+\maketitle
+
+\thispagestyle{empty}
+
+\section{Overview}
+\begin{center}
+    \begin{tabular}{ | c | l | }
+    \hline
+    \textbf{Runtime + Penalty} & \textbf{Note} \\ \hline
+    2:50:00 + 2:20:00 = 5:10:00 & naive implementation \\ 
+    1:51:30  +  0:00:00  =  1:51:30 & bug fix, IO optimization \\
+    1:25:03  +  0:00:00  =  1:25:03 & tweek stop criteria parameter \\
+    1:19:46  +  0:01:00  =  1:20:46 & new page rank calculation algorithm\\
+    1:15:44  +  0:01:00  =  1:16:44 & C implementation, min heap\\
+    \hline
+    \end{tabular}
+\end{center}
+
+
+\section{Division of Work}
+\begin{itemize}
+\item Ying-yu Ho:
+\item Jianchi Chen:
+\item Kexin Rong: implementation of initial working version; project report write up. 
+\end{itemize}
+
+\section{Optimzation}
+\subsection{Naive Implementation}
+\begin{enumerate}
+\item \emph{pagerank\_map}: For input: $<$node\_id $\backslash$t cpr, ppr, $n_1$, $n_2$, ...$n_d >$, where cpr = current page rank, ppr = previous page rank, $n_i$ are nodes that $n$ points to. Map to the following output: \\
+$<n_1 \backslash$t node\_id, cpr / d $\backslash$n$>$,  ..., $<n_d \backslash$t node\_id, cpr / d  $\backslash$n$>$ \\
+$<$node\_id $\backslash$ t node\_id, -cpr $\backslash$n$>$\\
+If the node has degree 0, output $<$node\_id $\backslash$ t node\_id, 1$>$
+\item \emph{pagerank\_reduce}:
+Calculate page rank using fomular
+\[r_i(t) = \alpha\sum_{i \in N(j)} \frac{r_j(t - 1)}{d_j} + 1 - \alpha \]
+Output in the following format:\\
+Output: $<$node\_id $\backslash$ t cpr, ppr, $n_1, n_2$, .... $\backslash$n$>$
+\item \emph{process\_map:} Reconstruct the output from pagerank\_reduce.\\
+$<$node\_id $\backslash$t cpr, ppr $\backslash$n $>$ \\
+$<$F $\backslash$t node\_id, cpr, ppr $\backslash$n$>$ \\
+$<n_1$ $\backslash$t node\_id $\backslash$n, ..., $n_d$ $\backslash$t node\_id $\backslash$n$>$
+\item \emph{process\_reduce:} 
+\begin{itemize}
+\item Reconstruct process\_map's output to match input format of pagerank\_map
+\item Use $O(n)$ algorithm Quickselect to select  top 20 pageranks 
+\item Stop criteria: Terminates the process iff all top 20 pageranks converge. Define converge as $\text{(cpr - ppr)   /  ppr} < \epsilon$
+\end{itemize}
+\end{enumerate}
+\subsection{Stop Criteria Optimization}
+\begin{itemize}
+\item \emph{Rationale:} Although the original stop criteria is  relatively stable, it tends to use unnecessarily many iterations. Therefore, we sought to look for a faster, but no less stable convergence test. 
+\item \emph{Approach:}
+An alternative approach  is to look at the convergence of top 20 nodes' ranking orders instead of pageranks. We consider an iteration to be terminal as long as the relative ranks of the top 20 nodes do not fluctuate too much. Terminate  if \[\text{abs(current rank - previous rank) / previous rank} <\epsilon\] for all top 20 nodes. 
+\item \emph{Result}: 
+This optimization failed. From testing on Amazon, we realized that the ranks fluctuate a lot, so it is rather difficult to come up with a working $\epsilon$. This approach was abandoned.
+\end{itemize}
+
+
+\subsection{Performance Optimization}
+\subsubsection{I/O}
+\begin{itemize}
+\item \emph{Rationale:} Upon closer examination, a flaw in the input/output format design caused some extra string operations. 
+\item \emph{Approach:} 
+pagerank\_map now maps $<$node\_id $\backslash$ t cpr, ppr, $n_1, n_2$, .... $\backslash$n$>$ to:\\
+$<n_1 \backslash$t  cpr / d $\backslash$n$>$,  ..., $<n_d \backslash$t  cpr / d  $\backslash$n$>$ \\
+$<$node\_id $\backslash$t R, cpr $\backslash$n$>$\\
+$<$node\_id $\backslash$t E, $n_1, n_2, ... n_d\backslash$n$>$\\\\
+Note that one major improvement is that in pagerank\_reduce, we no longer need to collect and recombine all neighbors of the current node, which takes around $O(n^2)$ for strings of length n.  Instead we can directly use the information from pagerank\_map.  
+\item \emph{Result}:
+This optimization, as well as some bug fixes, reduced the run time by about an hour.
+\end{itemize}
+
+\subsubsection{Min Heap}
+To further increase the performance, we used a min-heap structure to maintain a collection of nodes with top 20 page ranks. \\\\
+Here is the detailed algorithm:
+\begin{enumerate}
+\item When min heap is not full, add current node into the heap.
+\item When min heap is full, compare page rank of the current node with page rank of the heap's root. Replace the root with current node is the former is smaller, and adjust heap accordingly.
+\end{enumerate}
+\subsection{Pagerank Calculation Optimization}
+\begin{itemize}
+\item \emph{Rationale:} 
+We've noticed during the tests, that there are a large number of trivial nodes with pageranks that converges rather fast. Including them in every iteration wastes out time in calculation and doing IO.
+\item  \emph{Approach:} 
+In pagerank\_map, only emit the change in PR.  \\
+For example,  $<$node\_id $\backslash$ t cpr, ppr, $n_1, n_2$, .... $\backslash$n$>$
+now maps to:\\
+$<n_1 \backslash$t  (cpr - ppr) / d $\backslash$n$>$,  ..., $<n_d \backslash$t  (cpr - ppr) / d  $\backslash$n$>$ \\
+If the $cpr$ is small and the difference is small, we consider the node as steady, so it won't be emitted at all. \\\\
+To calculate pageranks in pagerank\_reduce, use the formula 
+\[CPR_i = PPR_i + \alpha\sum_{i \in N(j)} DPR_j\]
+where DPR is the changes in page ranks for all . ($DPR_j = CPR_j - PPR_j$).
+
+\item Result:\\\\
+Runtime on first trial: 1:36:21  +  6:41:00  =  8:17:21. We figured the reasons might be the following:
+\begin{enumerate}
+\item Deathline is not small enough. As a result we cut out too many nodes and got a large penalty. 
+\item This optimization reduces the runtime of pagerank\_reduce, but increase the run time of pagerank\_map. In a parallel environment, the latter becomes a bottleneck. One solution is to reimplement the map procedure in C.
+\end{enumerate}
+As a result, we refactored the entire code base into C.  The runtime on Amazon server went down to  1:15:44  +  0:01:00  =  1:16:44, which was not  as much as we had expected. We haven't figured out why. However, when tested locally, the run time on web google drops from 40s per iteration to 10s per iteration. The number of iterations needed also dropped from 40 to 25.\\
+
+\end{itemize}
+
+\section{References}
+http://www.michael-noll.com/tutorials/
+
+
+
+\end{document}
